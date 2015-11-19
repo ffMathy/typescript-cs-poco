@@ -1,0 +1,24 @@
+{
+  "name": "typescript-cs-poco",
+  "version": "1.0.0",
+  "description": "Generates a Typescript type definition file for a C# POCO class.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evertras/typescript-cs-poco.git"
+  },
+  "keywords": [
+    "typescript",
+    "C#",
+    "poco"
+  ],
+  "author": "Brandon Fulljames <bfullj@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/evertras/typescript-cs-poco/issues"
+  },
+  "homepage": "https://github.com/evertras/typescript-cs-poco#readme"
+}
