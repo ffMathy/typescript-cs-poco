@@ -3,9 +3,11 @@ var typeTranslation = {};
 typeTranslation["int"] = "number";
 typeTranslation["double"] = "number";
 typeTranslation["float"] = "number";
-typeTranslation["int32"] = "number";
-typeTranslation["int64"] = "number";
+typeTranslation["Int32"] = "number";
+typeTranslation["Int64"] = "number";
 typeTranslation["short"] = "number";
+typeTranslation["long"] = "number";
+typeTranslation["bool"] = "boolean";
 
 var blockCommentRegex = new RegExp("/\\*([\\s\\S]*)\\*/", "gm");
 var lineCommentRegex = new RegExp("//(.*)", "g");
@@ -13,6 +15,7 @@ var classRegex = /class ([\w\d]+)/;
 var propertyRegex = /public (\S*) ([\w\d]+)\s*{\s*get;\s*set;\s*}/gm;
 
 function removeComments(code) {
+    console.log(code);
     var output = code.replace(blockCommentRegex, "");
 
     var lines = output.split("\n").map(function(line) {

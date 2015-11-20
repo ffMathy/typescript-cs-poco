@@ -1,6 +1,6 @@
 {
   "name": "typescript-cs-poco",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Generates a Typescript type definition file for a C# POCO class.",
   "main": "index.js",
   "scripts": {
