@@ -13,6 +13,7 @@ var blockCommentRegex = new RegExp("/\\*([\\s\\S]*)\\*/", "gm");
 var lineCommentRegex = new RegExp("//(.*)", "g");
 var classRegex = /class ([\w\d]+)/;
 var propertyRegex = /public (\S*) ([\w\d]+)\s*{\s*get;\s*set;\s*}/gm;
+var collectionRegex = /(?:List|IEnumerable)<([\w\d]+)>/;
 
 function removeComments(code) {
     var output = code.replace(blockCommentRegex, "");
@@ -38,6 +39,12 @@ module.exports = function(input) {
 
         if (!varType) {
             varType = propertyResult[1];
+            
+            var collectionMatch = collectionRegex.exec(varType);
+            
+            if (collectionMatch) {
+                varType = collectionMatch[1] + '[]';
+            }
         }
 
         definition += '    ' + propertyResult[2] + ': ' + varType + ';\n';

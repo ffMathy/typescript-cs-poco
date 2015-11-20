@@ -31,6 +31,9 @@ namespace MyNamespace.Domain\n\
             get;\n\
             set;\n\
         }\n\
+        public List<string> ListFields { get; set; }\n\
+        public IEnumerable<string> IEnumerableFields { get; set; }\n\
+        public string[] ArrayFields { get; set; }\n\
     }\n\
 }\n";
 
@@ -38,6 +41,9 @@ var expectedOutput = "interface MyPoco {\n\
     Id: number;\n\
     Name: string;\n\
     Title: string;\n\
+    ListFields: string[];\n\
+    IEnumerableFields: string[];\n\
+    ArrayFields: string[];\n\
 }\n";
 
 var pocoGen = require('../index.js');
