@@ -4,7 +4,7 @@
   "description": "Generates a Typescript type definition file for a C# POCO class.",
   "main": "index.js",
   "scripts": {
-    "test": "mocha test"
+    "test": "jasmine"
   },
   "repository": {
     "type": "git",
