@@ -4,7 +4,7 @@
   "description": "Generates a Typescript type definition file for a C# POCO class.",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha test"
   },
   "repository": {
     "type": "git",
@@ -20,5 +20,10 @@
   "bugs": {
     "url": "https://github.com/evertras/typescript-cs-poco/issues"
   },
-  "homepage": "https://github.com/evertras/typescript-cs-poco#readme"
+  "homepage": "https://github.com/evertras/typescript-cs-poco#readme",
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "jasmine-node": "^1.14.5",
+    "tsd": "^0.6.5"
+  }
 }
