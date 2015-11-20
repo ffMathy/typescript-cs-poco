@@ -15,7 +15,6 @@ var classRegex = /class ([\w\d]+)/;
 var propertyRegex = /public (\S*) ([\w\d]+)\s*{\s*get;\s*set;\s*}/gm;
 
 function removeComments(code) {
-    console.log(code);
     var output = code.replace(blockCommentRegex, "");
 
     var lines = output.split("\n").map(function(line) {
