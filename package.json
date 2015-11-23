@@ -4,7 +4,7 @@
   "description": "Generates a Typescript type definition file for a C# POCO class.",
   "main": "index.js",
   "scripts": {
-    "test": "jasmine"
+    "test": "./node_modules/.bin/jasmine-node --color --matchall spec"
   },
   "repository": {
     "type": "git",
