@@ -37,6 +37,7 @@ namespace MyNamespace.Domain\n\
         public bool? OptionalBool {get; set;}\n\
         public DateTime SomeDate {get;set;}\n\
         public decimal SomeDecimal {get;set;}\n\
+        public Guid SomeGuid {get;set;}\n\
     }\n\
 }\n";
 
@@ -50,6 +51,7 @@ var expectedOutput = "interface MyPoco {\n\
     OptionalBool?: boolean;\n\
     SomeDate: string;\n\
     SomeDecimal: number;\n\
+    SomeGuid: string;\n\
 }\n";
 
 var pocoGen = require('../index.js');
