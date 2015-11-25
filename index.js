@@ -7,6 +7,7 @@ typeTranslation['Int32'] = 'number';
 typeTranslation['Int64'] = 'number';
 typeTranslation['short'] = 'number';
 typeTranslation['long'] = 'number';
+typeTranslation['decimal'] = 'number';
 typeTranslation['bool'] = 'boolean';
 typeTranslation['DateTime'] = 'string';
 

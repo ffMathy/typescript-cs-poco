@@ -36,6 +36,7 @@ namespace MyNamespace.Domain\n\
         public string[] ArrayFields { get; set; }\n\
         public bool? OptionalBool {get; set;}\n\
         public DateTime SomeDate {get;set;}\n\
+        public decimal SomeDecimal {get;set;}\n\
     }\n\
 }\n";
 
@@ -48,6 +49,7 @@ var expectedOutput = "interface MyPoco {\n\
     ArrayFields: string[];\n\
     OptionalBool?: boolean;\n\
     SomeDate: string;\n\
+    SomeDecimal: number;\n\
 }\n";
 
 var pocoGen = require('../index.js');
