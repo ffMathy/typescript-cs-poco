@@ -1,7 +1,7 @@
 {
   "name": "typescript-cs-poco",
-  "version": "1.0.8",
-  "description": "Generates a Typescript type definition file for a C# POCO class.",
+  "version": "1.1.0",
+  "description": "Generates a Typescript type definition file for a C# POCO class or enum.",
   "main": "index.js",
   "scripts": {
     "test": "./node_modules/.bin/jasmine-node --color --matchall spec"
