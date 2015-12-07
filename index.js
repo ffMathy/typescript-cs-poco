@@ -14,9 +14,7 @@ typeTranslation['Guid'] = 'string';
 
 var blockCommentRegex = new RegExp('/\\*([\\s\\S]*)\\*/', 'gm');
 var lineCommentRegex = new RegExp('//(.*)', 'g');
-var classRegex = /class ([\w\d]+)/;
-var propertyRegex = /public ([^?\s]*)(\??) ([\w\d]+)\s*{\s*get;\s*set;\s*}/gm;
-var collectionRegex = /(?:List|IEnumerable)<([\w\d]+)>/;
+var typeRegex = /(class|enum) ([\w\d]+)/;
 
 function removeComments(code) {
     var output = code.replace(blockCommentRegex, '');
@@ -28,10 +26,9 @@ function removeComments(code) {
     return lines.join('\n');
 }
 
-module.exports = function(input) {
-    input = removeComments(input);
-
-    var className = classRegex.exec(input)[1];
+function generateInterface(className, input) {
+    var propertyRegex = /public ([^?\s]*)(\??) ([\w\d]+)\s*{\s*get;\s*set;\s*}/gm;
+    var collectionRegex = /(?:List|IEnumerable)<([\w\d]+)>/;
 
     var definition = 'interface ' + className + ' {\n';
 
@@ -64,4 +61,55 @@ module.exports = function(input) {
     definition += '}\n';
 
     return definition;
+}
+
+function generateEnum(enumName, input) {
+    var enumContentsRegex = /enum\s+\S+\s*{([^}]*)}/gm;
+    var entryRegex = /([^\s,]+)\s*=?\s*(\d+)?,?/gm;
+    var definition = 'enum ' + enumName + ' { ';
+    
+    var entryResult;
+    
+    input = enumContentsRegex.exec(input)[1];
+    
+    var elements = [];
+    var lastIndex = 0;
+    
+    while(entryResult = entryRegex.exec(input)) {
+        var entryName = entryResult[1];
+        var entryValue = entryResult[2];
+        
+        if (!entryValue) {
+            entryValue = lastIndex;
+            
+            lastIndex++;
+        } else {
+            lastIndex = parseInt(entryValue, 10) + 1;
+        }
+        
+        elements.push(entryName + ' = ' + entryValue);
+    }
+    
+    definition += elements.join(', ');
+    
+    definition += ' }';
+    
+    return definition;
+}
+
+module.exports = function(input) {
+    input = removeComments(input);
+
+    var match = typeRegex.exec(input);
+    var type = match[1];
+    var typeName = match[2];
+    
+    if (type === 'class') {
+        return generateInterface(typeName, input);
+    } else if (type === 'enum') {
+        return generateEnum(typeName, input);
+    }
+    
+    // TODO: Error?  Is this ok?
+    return '';
 }
