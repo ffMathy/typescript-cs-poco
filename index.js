@@ -92,7 +92,7 @@ function generateEnum(enumName, input) {
     
     definition += elements.join(', ');
     
-    definition += ' }';
+    definition += ' }\n';
     
     return definition;
 }
