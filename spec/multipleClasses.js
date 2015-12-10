@@ -42,7 +42,7 @@ namespace MyNamespace.Domain\n\
         public Guid SomeGuid {get;set;}\n\
     }\n\
     \n\
-    public class MyOtherPoco\n\
+    public partial class MyOtherPoco\n\
     {\n\
         public int SomeField { get; set; }\n\
     }\n\

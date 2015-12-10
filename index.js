@@ -14,7 +14,7 @@ typeTranslation.Guid = 'string';
 
 var blockCommentRegex = new RegExp('/\\*([\\s\\S]*)\\*/', 'gm');
 var lineCommentRegex = new RegExp('//(.*)', 'g');
-var typeRegex = /^(\s*)(?:public )?\s*(class|enum)\s+([\w\d_<>]+)(?:\s*:\s*([\w\d\._]+))?\s*\{((?:.|\n|\r\n)*?)^\1\}/gm;
+var typeRegex = /^(\s*)(?:public\s*|partial\s*)*\s*(class|enum)\s+([\w\d_<>]+)(?:\s*:\s*([\w\d\._]+))?\s*\{((?:.|\n|\r)*?)^\1\}/gm;
 
 function removeComments(code) {
     var output = code.replace(blockCommentRegex, '');
@@ -96,7 +96,6 @@ function generateEnum(enumName, input) {
 
 module.exports = function(input, options) {
     input = removeComments(input);
-    input = input.replace("\r\n", "\n");
     var result = '';
     var match;
 
