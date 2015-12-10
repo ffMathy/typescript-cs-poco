@@ -96,6 +96,7 @@ function generateEnum(enumName, input) {
 
 module.exports = function(input, options) {
     input = removeComments(input);
+    input = input.replace("\r\n", "\n");
     var result = '';
     var match;
 
