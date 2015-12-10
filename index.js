@@ -108,9 +108,6 @@ module.exports = function(input) {
             result += '\n';
         }
 
-        console.log("Match!");
-        console.log(match[5]);
-        
         if (type === 'class') {
             if (inherits) {
                 typeName += ' extends ' + inherits;
