@@ -14,7 +14,7 @@ typeTranslation.Guid = 'string';
 
 var blockCommentRegex = new RegExp('/\\*([\\s\\S]*)\\*/', 'gm');
 var lineCommentRegex = new RegExp('//(.*)', 'g');
-var typeRegex = /(class|enum) ([\w\d_]+)(?:\s*:\s*([\w\d\._]+))?/m;
+var typeRegex = /^(\s*)(?:public )?\s*(class|enum)\s+([\w\d_]+)(?:\s*:\s*([\w\d\._]+))?\s*\{((?:.|\n)*?)^\1\}/gm;
 
 function removeComments(code) {
     var output = code.replace(blockCommentRegex, '');
@@ -34,7 +34,7 @@ function generateInterface(className, input) {
 
     var propertyResult;
     
-    while (propertyResult = propertyRegex.exec(input)) {
+    while (!!(propertyResult = propertyRegex.exec(input))) {
         var varType = typeTranslation[propertyResult[1]];
         
         var isOptional = propertyResult[2] === '?';
@@ -64,18 +64,15 @@ function generateInterface(className, input) {
 }
 
 function generateEnum(enumName, input) {
-    var enumContentsRegex = /enum\s+[\w\d_]+\s*(?:\s*:\s*[\d\w\._]+\s*)?{([^}]*)}/gm;
     var entryRegex = /([^\s,]+)\s*=?\s*(\d+)?,?/gm;
     var definition = 'enum ' + enumName + ' { ';
     
     var entryResult;
     
-    input = enumContentsRegex.exec(input)[1];
-    
     var elements = [];
     var lastIndex = 0;
     
-    while(entryResult = entryRegex.exec(input)) {
+    while(!!(entryResult = entryRegex.exec(input))) {
         var entryName = entryResult[1];
         var entryValue = entryResult[2];
         
@@ -99,23 +96,33 @@ function generateEnum(enumName, input) {
 
 module.exports = function(input) {
     input = removeComments(input);
+    var result = '';
+    var match;
 
-    var match = typeRegex.exec(input);
-    var type = match[1];
-    var typeName = match[2];
-    var inherits = match[3];
-    
-    if (type === 'class') {
-        if (inherits) {
-            typeName += ' extends ' + inherits;
+    while (!!(match = typeRegex.exec(input))) {
+        var type = match[2];
+        var typeName = match[3];
+        var inherits = match[4];
+
+        if (result.length > 0) {
+            result += '\n';
         }
 
-        return generateInterface(typeName, input);
-    } else if (type === 'enum') {
-        return generateEnum(typeName, input);
+        console.log("Match!");
+        console.log(match[5]);
+        
+        if (type === 'class') {
+            if (inherits) {
+                typeName += ' extends ' + inherits;
+            }
+
+            result += generateInterface(typeName, match[5]);
+        } else if (type === 'enum') {
+            result += generateEnum(typeName, match[5]);
+        }
     }
     
     // TODO: Error?  Is this ok?
-    return '';
+    return result;
 };
 
