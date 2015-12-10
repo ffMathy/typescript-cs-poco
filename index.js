@@ -14,7 +14,7 @@ typeTranslation.Guid = 'string';
 
 var blockCommentRegex = new RegExp('/\\*([\\s\\S]*)\\*/', 'gm');
 var lineCommentRegex = new RegExp('//(.*)', 'g');
-var typeRegex = /^(\s*)(?:public )?\s*(class|enum)\s+([\w\d_]+)(?:\s*:\s*([\w\d\._]+))?\s*\{((?:.|\n)*?)^\1\}/gm;
+var typeRegex = /^(\s*)(?:public )?\s*(class|enum)\s+([\w\d_<>]+)(?:\s*:\s*([\w\d\._]+))?\s*\{((?:.|\n)*?)^\1\}/gm;
 
 function removeComments(code) {
     var output = code.replace(blockCommentRegex, '');
