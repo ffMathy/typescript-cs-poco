@@ -59,7 +59,7 @@ var expectedOutput = "interface IMyPoco {\n\
 var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function() {
-	it('should transform a POCO correctly', function() {
+	it('should prefix with I if option is set', function() {
 		var result = pocoGen(sampleFile, {
             prefixWithI: true
         });
