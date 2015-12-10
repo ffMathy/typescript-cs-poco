@@ -103,8 +103,13 @@ module.exports = function(input) {
     var match = typeRegex.exec(input);
     var type = match[1];
     var typeName = match[2];
+    var inherits = match[3];
     
     if (type === 'class') {
+        if (inherits) {
+            typeName += ' extends ' + inherits;
+        }
+
         return generateInterface(typeName, input);
     } else if (type === 'enum') {
         return generateEnum(typeName, input);
