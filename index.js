@@ -1,20 +1,20 @@
 var typeTranslation = {};
 
-typeTranslation['int'] = 'number';
-typeTranslation['double'] = 'number';
-typeTranslation['float'] = 'number';
-typeTranslation['Int32'] = 'number';
-typeTranslation['Int64'] = 'number';
-typeTranslation['short'] = 'number';
-typeTranslation['long'] = 'number';
-typeTranslation['decimal'] = 'number';
-typeTranslation['bool'] = 'boolean';
-typeTranslation['DateTime'] = 'string';
-typeTranslation['Guid'] = 'string';
+typeTranslation.int = 'number';
+typeTranslation.double = 'number';
+typeTranslation.float = 'number';
+typeTranslation.Int32 = 'number';
+typeTranslation.Int64 = 'number';
+typeTranslation.short = 'number';
+typeTranslation.long = 'number';
+typeTranslation.decimal = 'number';
+typeTranslation.bool = 'boolean';
+typeTranslation.DateTime = 'string';
+typeTranslation.Guid = 'string';
 
 var blockCommentRegex = new RegExp('/\\*([\\s\\S]*)\\*/', 'gm');
 var lineCommentRegex = new RegExp('//(.*)', 'g');
-var typeRegex = /(class|enum) ([\w\d]+)/;
+var typeRegex = /(class|enum) ([\w\d]+)(?:\s*:\s*(\S+))?/;
 
 function removeComments(code) {
     var output = code.replace(blockCommentRegex, '');
@@ -112,4 +112,5 @@ module.exports = function(input) {
     
     // TODO: Error?  Is this ok?
     return '';
-}
+};
+
