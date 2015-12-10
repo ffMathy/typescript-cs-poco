@@ -14,7 +14,7 @@ typeTranslation.Guid = 'string';
 
 var blockCommentRegex = new RegExp('/\\*([\\s\\S]*)\\*/', 'gm');
 var lineCommentRegex = new RegExp('//(.*)', 'g');
-var typeRegex = /(class|enum) ([\w\d]+)(?:\s*:\s*(\S+))?/;
+var typeRegex = /(class|enum) ([\w\d_]+)(?:\s*:\s*([\w\d\._]+))?/m;
 
 function removeComments(code) {
     var output = code.replace(blockCommentRegex, '');
@@ -64,7 +64,7 @@ function generateInterface(className, input) {
 }
 
 function generateEnum(enumName, input) {
-    var enumContentsRegex = /enum\s+\S+\s*{([^}]*)}/gm;
+    var enumContentsRegex = /enum\s+[\w\d_]+\s*(?:\s*:\s*[\d\w\._]+\s*)?{([^}]*)}/gm;
     var entryRegex = /([^\s,]+)\s*=?\s*(\d+)?,?/gm;
     var definition = 'enum ' + enumName + ' { ';
     
