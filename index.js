@@ -94,10 +94,14 @@ function generateEnum(enumName, input) {
     return definition;
 }
 
-module.exports = function(input) {
+module.exports = function(input, options) {
     input = removeComments(input);
     var result = '';
     var match;
+
+    if (!options) {
+        options = {};
+    }
 
     while (!!(match = typeRegex.exec(input))) {
         var type = match[2];
@@ -111,6 +115,10 @@ module.exports = function(input) {
         if (type === 'class') {
             if (inherits) {
                 typeName += ' extends ' + inherits;
+            }
+
+            if (options.prefixWithI) {
+                typeName = 'I' + typeName;
             }
 
             result += generateInterface(typeName, match[5]);
