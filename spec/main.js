@@ -40,6 +40,7 @@ namespace MyNamespace.Domain\n\
         public DateTime SomeDate {get;set;}\n\
         public decimal SomeDecimal {get;set;}\n\
         public Guid SomeGuid {get;set;}\n\
+        public JObject DynamicContents { get; set; }\n\
     }\n\
 }\n";
 
@@ -54,6 +55,7 @@ var expectedOutput = "interface MyPoco {\n\
     SomeDate: string;\n\
     SomeDecimal: number;\n\
     SomeGuid: string;\n\
+    DynamicContents: any;\n\
 }\n";
 
 var pocoGen = require('../index.js');
