@@ -128,6 +128,16 @@ module.exports = function(input, options) {
         }
     }
     
+    if (options.baseNamespace) {
+        var lines = ['module ' + options.baseNamespace + ' {'];
+        
+        lines = lines.concat(result.split('\n').map(function(line) { return '    ' + line; }));
+        lines = lines.slice(0, lines.length - 1);
+        lines = lines.concat('}');
+        
+        result = lines.join('\n');
+    }
+    
     // TODO: Error?  Is this ok?
     return result;
 };

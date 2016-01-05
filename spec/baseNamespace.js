@@ -7,21 +7,23 @@ using System;\n\
 \n\
 namespace MyNamespace.Domain\n\
 {\n\
-    public class MyPoco<T>\n\
+    public class MyPoco\n\
     {\n\
-        public T GenericTypeValue {get;set;}\n\
+        public int SomeInt { get; set; }\n\
     }\n\
 }\n";
 
-var expectedOutput = "interface MyPoco<T> {\n\
-    GenericTypeValue: T;\n\
-}\n";
+var expectedOutput = "module MyNamespace {\n\
+    interface MyPoco {\n\
+        SomeInt: number;\n\
+    }\n\
+}";
 
 var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function() {
-	it('should transform a POCO with a single generic type correctly', function() {
-		var result = pocoGen(sampleFile);
+	it('should use the baseNamespace option correctly', function() {
+		var result = pocoGen(sampleFile, { baseNamespace: 'MyNamespace' });
         
         expect(result).toEqual(expectedOutput);
 	});
