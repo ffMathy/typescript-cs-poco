@@ -131,7 +131,9 @@ module.exports = function(input, options) {
     if (options.baseNamespace) {
         var lines = ['module ' + options.baseNamespace + ' {'];
         
-        lines = lines.concat(result.split('\n').map(function(line) { return '    ' + line; }));
+        lines = lines.concat(result.split('\n').map(function(line) {
+            return '    ' + (line.indexOf('interface') === 0 ? 'export ' + line : line);
+        }));
         lines = lines.slice(0, lines.length - 1);
         lines = lines.concat('}');
         
