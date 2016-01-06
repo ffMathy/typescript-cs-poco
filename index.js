@@ -132,7 +132,7 @@ module.exports = function(input, options) {
         var lines = ['module ' + options.baseNamespace + ' {'];
         
         lines = lines.concat(result.split('\n').map(function(line) {
-            return '    ' + (line.indexOf('interface') === 0 ? 'export ' + line : line);
+            return '    ' + (/^(?:interface|enum)/.test(line) ? 'export ' + line : line);
         }));
         lines = lines.slice(0, lines.length - 1);
         lines = lines.concat('}');

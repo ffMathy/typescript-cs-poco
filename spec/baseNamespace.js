@@ -11,12 +11,19 @@ namespace MyNamespace.Domain\n\
     {\n\
         public int SomeInt { get; set; }\n\
     }\n\
+    \n\
+    public enum MyEnum\n\
+    {\n\
+        One, Two\n\
+    }\n\
 }\n";
 
 var expectedOutput = "module MyNamespace {\n\
     export interface MyPoco {\n\
         SomeInt: number;\n\
     }\n\
+    \n\
+    export enum MyEnum { One = 0, Two = 1 }\n\
 }";
 
 var pocoGen = require('../index.js');
