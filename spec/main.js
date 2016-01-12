@@ -37,6 +37,7 @@ namespace MyNamespace.Domain\n\
         public IEnumerable<string> IEnumerableFields { get; set; }\n\
         public string[] ArrayFields { get; set; }\n\
         public int[] NumberArray { get; set; }\n\
+        public List<int> NumberList { get; set; }\n\
         public bool? OptionalBool {get; set;}\n\
         public DateTime SomeDate {get;set;}\n\
         public decimal SomeDecimal {get;set;}\n\
@@ -53,6 +54,7 @@ var expectedOutput = "interface MyPoco {\n\
     IEnumerableFields: string[];\n\
     ArrayFields: string[];\n\
     NumberArray: number[];\n\
+    NumberList: number[];\n\
     OptionalBool?: boolean;\n\
     SomeDate: string;\n\
     SomeDecimal: number;\n\
