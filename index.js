@@ -12,6 +12,7 @@ typeTranslation.bool = 'boolean';
 typeTranslation.DateTime = 'string';
 typeTranslation.Guid = 'string';
 typeTranslation.JObject = 'any';
+typeTranslation.string = 'string';
 
 var blockCommentRegex = new RegExp('/\\*([\\s\\S]*)\\*/', 'gm');
 var lineCommentRegex = new RegExp('//(.*)', 'g');
@@ -27,7 +28,7 @@ function removeComments(code) {
     return lines.join('\n');
 }
 
-function generateInterface(className, input) {
+function generateInterface(className, input, options) {
     var propertyRegex = /public ([^?\s]*)(\??) ([\w\d]+)\s*{\s*get;\s*set;\s*}/gm;
     var collectionRegex = /(?:List|IEnumerable)<([\w\d]+)>/;
     var arrayRegex = /([\w\d]+)\[\]/;
@@ -35,6 +36,8 @@ function generateInterface(className, input) {
     var definition = 'interface ' + className + ' {\n';
 
     var propertyResult;
+    
+    var prefixFieldsWithI = options && options.prefixWithI;
     
     while (!!(propertyResult = propertyRegex.exec(input))) {
         var varType = typeTranslation[propertyResult[1]];
@@ -54,6 +57,10 @@ function generateInterface(className, input) {
                     varType = typeTranslation[collectionType];
                 } else {
                     varType = collectionType;
+                                        
+                    if (prefixFieldsWithI) {
+                        varType = 'I' + varType;
+                    }
                 }
                 
                 varType += '[]';
@@ -64,9 +71,15 @@ function generateInterface(className, input) {
                     varType = typeTranslation[arrayType];
                 } else {
                     varType = arrayType;
+                    
+                    if (prefixFieldsWithI) {
+                        varType = 'I' + varType;
+                    }
                 }
                 
                 varType += '[]';
+            } else if (prefixFieldsWithI) {
+                varType = 'I' + varType;
             }
         }
 
@@ -84,7 +97,7 @@ function generateInterface(className, input) {
     return definition;
 }
 
-function generateEnum(enumName, input) {
+function generateEnum(enumName, input, options) {
     var entryRegex = /([^\s,]+)\s*=?\s*(\d+)?,?/gm;
     var definition = 'enum ' + enumName + ' { ';
     
@@ -142,9 +155,9 @@ module.exports = function(input, options) {
                 typeName = 'I' + typeName;
             }
 
-            result += generateInterface(typeName, match[5]);
+            result += generateInterface(typeName, match[5], options);
         } else if (type === 'enum') {
-            result += generateEnum(typeName, match[5]);
+            result += generateEnum(typeName, match[5], options);
         }
     }
     

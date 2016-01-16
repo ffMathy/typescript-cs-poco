@@ -40,6 +40,9 @@ namespace MyNamespace.Domain\n\
         public DateTime SomeDate {get;set;}\n\
         public decimal SomeDecimal {get;set;}\n\
         public Guid SomeGuid {get;set;}\n\
+        public SomeOtherPoco AnotherPoco {get; set;}\n\
+        public List<SomeOtherPoco> MorePocos {get; set;}\n\
+        public SomeOtherPoco[] ArrayPocos {get; set;}\n\
     }\n\
 }\n";
 
@@ -54,6 +57,9 @@ var expectedOutput = "interface IMyPoco {\n\
     SomeDate: string;\n\
     SomeDecimal: number;\n\
     SomeGuid: string;\n\
+    AnotherPoco: ISomeOtherPoco;\n\
+    MorePocos: ISomeOtherPoco[];\n\
+    ArrayPocos: ISomeOtherPoco[];\n\
 }\n";
 
 var pocoGen = require('../index.js');
