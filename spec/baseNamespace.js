@@ -18,7 +18,7 @@ namespace MyNamespace.Domain\n\
     }\n\
 }\n";
 
-var expectedOutput = "module MyNamespace {\n\
+var expectedOutput = "declare module MyNamespace {\n\
     export interface MyPoco {\n\
         SomeInt: number;\n\
     }\n\

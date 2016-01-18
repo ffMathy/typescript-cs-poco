@@ -21,7 +21,7 @@ namespace MyNamespace.Domain\n\
     }\n\
 }\n";
 
-var expectedOutput = "enum MyEnum { Green = 0, Red = 1, Blue = 2, Pink = 10, Ultraviolet = 11 }\n";
+var expectedOutput = "declare enum MyEnum { Green = 0, Red = 1, Blue = 2, Pink = 10, Ultraviolet = 11 }\n";
 
 var pocoGen = require('../index.js');
 

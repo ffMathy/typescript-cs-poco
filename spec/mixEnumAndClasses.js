@@ -62,7 +62,7 @@ var expectedOutput = "interface MyPoco {\n\
     SomeGuid: string;\n\
 }\n\
 \n\
-enum MyEnum { Green = 0, Blue = 1 }\n"; 
+declare enum MyEnum { Green = 0, Blue = 1 }\n"; 
 var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function() {

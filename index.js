@@ -157,12 +157,16 @@ module.exports = function(input, options) {
 
             result += generateInterface(typeName, match[5], options);
         } else if (type === 'enum') {
+            if (!options.baseNamespace) {
+              result += 'declare ';
+            }
+
             result += generateEnum(typeName, match[5], options);
         }
     }
     
     if (options.baseNamespace) {
-        var lines = ['module ' + options.baseNamespace + ' {'];
+        var lines = ['declare module ' + options.baseNamespace + ' {'];
         
         lines = lines.concat(result.split('\n').map(function(line) {
             return '    ' + (/^(?:interface|enum)/.test(line) ? 'export ' + line : line);
