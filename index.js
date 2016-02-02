@@ -13,6 +13,7 @@ typeTranslation.DateTime = 'string';
 typeTranslation.Guid = 'string';
 typeTranslation.JObject = 'any';
 typeTranslation.string = 'string';
+typeTranslation.dynamic = 'any';
 
 var blockCommentRegex = new RegExp('/\\*([\\s\\S]*)\\*/', 'gm');
 var lineCommentRegex = new RegExp('//(.*)', 'g');
