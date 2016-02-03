@@ -111,6 +111,11 @@ function generateEnum(enumName, input, options) {
         var entryName = entryResult[1];
         var entryValue = entryResult[2];
         
+        // Skip attributes, might be a cleaner way in the regex
+        if (entryName.indexOf('[') !== -1) {
+            continue;
+        }
+        
         if (!entryValue) {
             entryValue = lastIndex;
             

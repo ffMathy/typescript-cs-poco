@@ -17,6 +17,7 @@ namespace MyNamespace.Domain\n\
         /*\n\
         public string IgnoreMe4 {get; set; }\n\
         */\n\
+        [SomeAttribute(64)]\n\
         Pink = 10, Ultraviolet\n\
     }\n\
 }\n";

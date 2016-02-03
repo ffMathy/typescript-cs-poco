@@ -19,7 +19,8 @@ namespace MyNamespace.Domain\n\
             this.Name = value.Name;\n\
             this.Title = value.Title;\n\
         }\n\
-\
+\n\
+        [SomeAttribute(42)]\n\
         public int Id { get; set; }\n\
         public string Name { get; set; }\n\
         //public string IgnoreMe { get; set; }\n\
