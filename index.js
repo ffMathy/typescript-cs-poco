@@ -40,6 +40,12 @@ function generateInterface(className, input, options) {
     
     var prefixFieldsWithI = options && options.prefixWithI;
     
+    if (options && options.dateTimeToDate) {
+      typeTranslation.DateTime = 'Date';
+    } else {
+      typeTranslation.DateTime = 'string';
+    }
+    
     while (!!(propertyResult = propertyRegex.exec(input))) {
         var varType = typeTranslation[propertyResult[1]];
         
