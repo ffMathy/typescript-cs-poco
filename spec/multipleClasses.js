@@ -46,6 +46,11 @@ namespace MyNamespace.Domain\n\
     {\n\
         public int SomeField { get; set; }\n\
     }\n\
+    \n\
+    public struct MyStruct\n\
+    {\n\
+        public int SomeIntField { get; set; }\n\
+    }\n\
 }\n";
 
 var expectedOutput = "interface MyPoco {\n\
@@ -63,6 +68,10 @@ var expectedOutput = "interface MyPoco {\n\
 \n\
 interface MyOtherPoco {\n\
     SomeField: number;\n\
+}\n\
+\n\
+interface MyStruct {\n\
+    SomeIntField: number;\n\
 }\n";
 
 var pocoGen = require('../index.js');
