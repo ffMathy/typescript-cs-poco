@@ -178,7 +178,15 @@ module.exports = function(input, options) {
     }
     
     if (options.baseNamespace) {
-        var lines = ['declare module ' + options.baseNamespace + ' {'];
+        var firstLine; 
+
+        if (options.definitionFile === false) {
+            firstLine = 'module ' + options.baseNamespace + ' {';
+        } else {
+            firstLine = 'declare module ' + options.baseNamespace + ' {';
+        }
+
+        var lines = [firstLine];
         
         lines = lines.concat(result.split('\n').map(function(line) {
             return '    ' + (/^(?:interface|enum)/.test(line) ? 'export ' + line : line);
