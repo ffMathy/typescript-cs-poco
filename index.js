@@ -154,6 +154,8 @@ module.exports = function(input, options) {
         options = {};
     }
 
+    var ignoreInheritance = options && options.ignoreInheritance;
+
     while (!!(match = typeRegex.exec(input))) {
         var type = match[2];
         var typeName = match[3];
@@ -164,7 +166,7 @@ module.exports = function(input, options) {
         }
 
         if (type === 'class' || type === 'struct') {
-            if (inherits) {
+            if (inherits && (!ignoreInheritance || ignoreInheritance.indexOf(inherits) === -1)) {
                 typeName += ' extends ' + inherits;
             }
 
