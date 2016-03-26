@@ -183,7 +183,7 @@ module.exports = function(input, options) {
     }
     
     if (options.baseNamespace) {
-        var firstLine;
+        var firstLine; 
 
         if (options.definitionFile === false) {
             firstLine = 'module ' + options.baseNamespace + ' {';
