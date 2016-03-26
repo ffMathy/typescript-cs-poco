@@ -39,6 +39,7 @@ function generateInterface(className, input, options) {
     var propertyResult;
     
     var prefixFieldsWithI = options && options.prefixWithI;
+    var propertyNameResolver = options && options.propertyNameResolver;
     
     if (options && options.dateTimeToDate) {
       typeTranslation.DateTime = 'Date';
@@ -90,7 +91,11 @@ function generateInterface(className, input, options) {
             }
         }
 
-        definition += '    ' + propertyResult[3];
+        var propertyName = propertyResult[3];
+        if (propertyNameResolver) {
+          propertyName = propertyNameResolver(propertyName);
+        }
+        definition += '    ' + propertyName;
         
         if (isOptional) {
             definition += '?';
@@ -200,4 +205,3 @@ module.exports = function(input, options) {
     // TODO: Error?  Is this ok?
     return result;
 };
-
