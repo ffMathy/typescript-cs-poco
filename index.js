@@ -37,65 +37,70 @@ function generateInterface(className, input, options) {
     var definition = 'interface ' + className + ' {\n';
 
     var propertyResult;
-    
+
     var prefixFieldsWithI = options && options.prefixWithI;
-    
+    var propertyNameResolver = options && options.propertyNameResolver;
+
     if (options && options.dateTimeToDate) {
       typeTranslation.DateTime = 'Date';
     } else {
       typeTranslation.DateTime = 'string';
     }
-    
+
     while (!!(propertyResult = propertyRegex.exec(input))) {
         var varType = typeTranslation[propertyResult[1]];
-        
+
         var isOptional = propertyResult[2] === '?';
 
         if (!varType) {
             varType = propertyResult[1];
-            
+
             var collectionMatch = collectionRegex.exec(varType);
             var arrayMatch = arrayRegex.exec(varType);
-            
+
             if (collectionMatch) {
                 var collectionType = collectionMatch[1];
-                
+
                 if (typeTranslation[collectionType]) {
                     varType = typeTranslation[collectionType];
                 } else {
                     varType = collectionType;
-                                        
+
                     if (prefixFieldsWithI) {
                         varType = 'I' + varType;
                     }
                 }
-                
+
                 varType += '[]';
             } else if (arrayMatch) {
                 var arrayType = arrayMatch[1];
-                
+
                 if (typeTranslation[arrayType]) {
                     varType = typeTranslation[arrayType];
                 } else {
                     varType = arrayType;
-                    
+
                     if (prefixFieldsWithI) {
                         varType = 'I' + varType;
                     }
                 }
-                
+
                 varType += '[]';
             } else if (prefixFieldsWithI) {
                 varType = 'I' + varType;
             }
         }
 
-        definition += '    ' + propertyResult[3];
-        
+        var propertyName = propertyResult[3];
+        if (propertyNameResolver) {
+          propertyName = propertyNameResolver(propertyName);
+        }
+        definition += '    ' + propertyName;
+
         if (isOptional) {
             definition += '?';
         }
-        
+
         definition += ': ' + varType + ';\n';
     }
 
@@ -107,36 +112,36 @@ function generateInterface(className, input, options) {
 function generateEnum(enumName, input, options) {
     var entryRegex = /([^\s,]+)\s*=?\s*(\d+)?,?/gm;
     var definition = 'enum ' + enumName + ' { ';
-    
+
     var entryResult;
-    
+
     var elements = [];
     var lastIndex = 0;
-    
+
     while(!!(entryResult = entryRegex.exec(input))) {
         var entryName = entryResult[1];
         var entryValue = entryResult[2];
-        
+
         // Skip attributes, might be a cleaner way in the regex
         if (entryName.indexOf('[') !== -1) {
             continue;
         }
-        
+
         if (!entryValue) {
             entryValue = lastIndex;
-            
+
             lastIndex++;
         } else {
             lastIndex = parseInt(entryValue, 10) + 1;
         }
-        
+
         elements.push(entryName + ' = ' + entryValue);
     }
-    
+
     definition += elements.join(', ');
-    
+
     definition += ' }\n';
-    
+
     return definition;
 }
 
@@ -176,9 +181,9 @@ module.exports = function(input, options) {
             result += generateEnum(typeName, match[5], options);
         }
     }
-    
+
     if (options.baseNamespace) {
-        var firstLine; 
+        var firstLine;
 
         if (options.definitionFile === false) {
             firstLine = 'module ' + options.baseNamespace + ' {';
@@ -187,17 +192,16 @@ module.exports = function(input, options) {
         }
 
         var lines = [firstLine];
-        
+
         lines = lines.concat(result.split('\n').map(function(line) {
             return '    ' + (/^(?:interface|enum)/.test(line) ? 'export ' + line : line);
         }));
         lines = lines.slice(0, lines.length - 1);
         lines = lines.concat('}');
-        
+
         result = lines.join('\n');
     }
-    
+
     // TODO: Error?  Is this ok?
     return result;
 };
-
