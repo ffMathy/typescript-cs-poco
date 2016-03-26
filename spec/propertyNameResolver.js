@@ -9,12 +9,16 @@ namespace MyNamespace.Domain\n\
 {\n\
     public class MyPoco\n\
     {\n\
-        public int SomeInt { get; set; }\n\
+        public int Id { get; set; }\n\
+        public string Name { get; set; }\n\
+        public string Title { get; set; }\n\
     }\n\
 }\n";
 
-var expectedOutput = "export interface MyPoco {\n\
-	someInt: number;\n\
+var expectedOutput = "interface MyPoco {\n\
+    id: number;\n\
+    name: string;\n\
+    title: string;\n\
 }\n";
 
 var pocoGen = require('../index.js');
