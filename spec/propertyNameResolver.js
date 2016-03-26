@@ -10,28 +10,27 @@ namespace MyNamespace.Domain\n\
     public class MyPoco\n\
     {\n\
         public int Id { get; set; }\n\
-        public string Name { get; set; }\n\
+        public string NameOfStuff { get; set; }\n\
         public string Title { get; set; }\n\
     }\n\
 }\n";
 
 var expectedOutput = "interface MyPoco {\n\
     id: number;\n\
-    name: string;\n\
+    nameOfStuff: string;\n\
     title: string;\n\
 }\n";
 
 var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function() {
-	it('should use the propertyNameResolver option correctly', function() {
-		var result = pocoGen(sampleFile, { propertyNameResolver : _propertyNameResolver });
-        
-        expect(result).toEqual(expectedOutput);
-		
-		
-		function _propertyNameResolver(propertyName) {
-			return propertyName[0].toLowerCase() + propertyName.substring(1);
-		}
-	});
+  it('should use the propertyNameResolver option correctly', function() {
+    var result = pocoGen(sampleFile, { propertyNameResolver : camelCaseResolver });
+
+    expect(result).toEqual(expectedOutput);
+
+    function camelCaseResolver(propertyName) {
+      return propertyName[0].toLowerCase() + propertyName.substring(1);
+    }
+  });
 });
