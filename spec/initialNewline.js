@@ -14,7 +14,10 @@ namespace MyNamespace.Domain\n\
     }\n\
 }\n";
 
-var expectedOutput = "declare enum JustAnEnum { One = 0, Two = 1 }\n";
+var expectedOutput = "declare enum JustAnEnum {\n\
+    One = 0,\n\
+    Two = 1\n\
+}\n";
 
 var pocoGen = require('../index.js');
 

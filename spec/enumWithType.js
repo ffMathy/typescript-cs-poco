@@ -21,14 +21,20 @@ namespace MyNamespace.Domain\n\
     }\n\
 }\n";
 
-var expectedOutput = "declare enum MyEnum { Green = 0, Red = 1, Blue = 2, Pink = 10, Ultraviolet = 11 }\n";
+var expectedOutput = "declare enum MyEnum {\n\
+    Green = 0,\n\
+    Red = 1,\n\
+    Blue = 2,\n\
+    Pink = 10,\n\
+    Ultraviolet = 11\n\
+}\n";
 
 var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should ignore an enum\'s explicit type', function() {
 		var result = pocoGen(sampleFile);
-        
+
         expect(result).toEqual(expectedOutput);
 	});
 });

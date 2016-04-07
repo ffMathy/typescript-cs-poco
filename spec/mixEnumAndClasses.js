@@ -62,13 +62,16 @@ var expectedOutput = "interface MyPoco {\n\
     SomeGuid: string;\n\
 }\n\
 \n\
-declare enum MyEnum { Green = 0, Blue = 1 }\n"; 
+declare enum MyEnum {\n\
+    Green = 0,\n\
+    Blue = 1\n\
+}\n";
 var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function() {
-	it('should handle multiple classes in the same file', function() {
+	it('should handle enums and classes in the same file', function() {
 		var result = pocoGen(sampleFile);
-        
+
         expect(result).toEqual(expectedOutput);
 	});
 });
