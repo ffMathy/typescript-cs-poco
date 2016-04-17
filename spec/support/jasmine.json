@@ -1,6 +1,20 @@
 {
 	"spec_dir": "spec",
 	"spec_files": [
-		"main.js"
+		"abstractClass.js",
+		"baseNamespace.js",
+		"baseNamespaceNoDefinitionFile.js",
+		"dateTimeToDateOption.js",
+		"enum.js",
+		"enumWithType.js",
+		"generics.js",
+		"ignoreInheritanceOption.js",
+		"inherit.js",
+		"initialNewline.js",
+		"main.js",
+		"mixEnumAndClasses.js",
+		"multipleClasses.js",
+		"prefixWithIOption.js",
+		"propertyNameResolver.js"
 	]
 }

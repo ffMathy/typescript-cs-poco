@@ -17,7 +17,7 @@ typeTranslation.dynamic = 'any';
 
 var blockCommentRegex = new RegExp('/\\*([\\s\\S]*)\\*/', 'gm');
 var lineCommentRegex = new RegExp('//(.*)', 'g');
-var typeRegex = /^([\t ]*)(?:public\s*|partial\s*)*\s*(class|enum|struct)\s+([\w\d_<>]+)(?:\s*:\s*([\w\d\._]+))?\s*\{((?:.|\n|\r)*?)^\1\}/gm;
+var typeRegex = /^([\t ]*)(?:public\s*|partial\s*|abstract\s*)*\s*(class|enum|struct)\s+([\w\d_<>]+)(?:\s*:\s*((?:(?:[\w\d\._]+)(?:,\s+)?)+))?\s*\{((?:.|\n|\r)*?)^\1\}/gm;
 
 function removeComments(code) {
     var output = code.replace(blockCommentRegex, '');
@@ -37,54 +37,54 @@ function generateInterface(className, input, options) {
     var definition = 'interface ' + className + ' {\n';
 
     var propertyResult;
-    
+
     var prefixFieldsWithI = options && options.prefixWithI;
     var propertyNameResolver = options && options.propertyNameResolver;
-    
+
     if (options && options.dateTimeToDate) {
       typeTranslation.DateTime = 'Date';
     } else {
       typeTranslation.DateTime = 'string';
     }
-    
+
     while (!!(propertyResult = propertyRegex.exec(input))) {
         var varType = typeTranslation[propertyResult[1]];
-        
+
         var isOptional = propertyResult[2] === '?';
 
         if (!varType) {
             varType = propertyResult[1];
-            
+
             var collectionMatch = collectionRegex.exec(varType);
             var arrayMatch = arrayRegex.exec(varType);
-            
+
             if (collectionMatch) {
                 var collectionType = collectionMatch[1];
-                
+
                 if (typeTranslation[collectionType]) {
                     varType = typeTranslation[collectionType];
                 } else {
                     varType = collectionType;
-                                        
+
                     if (prefixFieldsWithI) {
                         varType = 'I' + varType;
                     }
                 }
-                
+
                 varType += '[]';
             } else if (arrayMatch) {
                 var arrayType = arrayMatch[1];
-                
+
                 if (typeTranslation[arrayType]) {
                     varType = typeTranslation[arrayType];
                 } else {
                     varType = arrayType;
-                    
+
                     if (prefixFieldsWithI) {
                         varType = 'I' + varType;
                     }
                 }
-                
+
                 varType += '[]';
             } else if (prefixFieldsWithI) {
                 varType = 'I' + varType;
@@ -96,11 +96,11 @@ function generateInterface(className, input, options) {
           propertyName = propertyNameResolver(propertyName);
         }
         definition += '    ' + propertyName;
-        
+
         if (isOptional) {
             definition += '?';
         }
-        
+
         definition += ': ' + varType + ';\n';
     }
 
@@ -111,37 +111,37 @@ function generateInterface(className, input, options) {
 
 function generateEnum(enumName, input, options) {
     var entryRegex = /([^\s,]+)\s*=?\s*(\d+)?,?/gm;
-    var definition = 'enum ' + enumName + ' { ';
-    
+    var definition = 'enum ' + enumName + ' {\n    ';
+
     var entryResult;
-    
+
     var elements = [];
     var lastIndex = 0;
-    
+
     while(!!(entryResult = entryRegex.exec(input))) {
         var entryName = entryResult[1];
         var entryValue = entryResult[2];
-        
+
         // Skip attributes, might be a cleaner way in the regex
         if (entryName.indexOf('[') !== -1) {
             continue;
         }
-        
+
         if (!entryValue) {
             entryValue = lastIndex;
-            
+
             lastIndex++;
         } else {
             lastIndex = parseInt(entryValue, 10) + 1;
         }
-        
+
         elements.push(entryName + ' = ' + entryValue);
     }
-    
-    definition += elements.join(', ');
-    
-    definition += ' }\n';
-    
+
+    definition += elements.join(',\n    ');
+
+    definition += '\n}\n';
+
     return definition;
 }
 
@@ -154,6 +154,8 @@ module.exports = function(input, options) {
         options = {};
     }
 
+    var ignoreInheritance = options && options.ignoreInheritance;
+
     while (!!(match = typeRegex.exec(input))) {
         var type = match[2];
         var typeName = match[3];
@@ -164,7 +166,7 @@ module.exports = function(input, options) {
         }
 
         if (type === 'class' || type === 'struct') {
-            if (inherits) {
+            if (inherits && (!ignoreInheritance || ignoreInheritance.indexOf(inherits) === -1)) {
                 typeName += ' extends ' + inherits;
             }
 
@@ -181,9 +183,9 @@ module.exports = function(input, options) {
             result += generateEnum(typeName, match[5], options);
         }
     }
-    
+
     if (options.baseNamespace) {
-        var firstLine; 
+        var firstLine;
 
         if (options.definitionFile === false) {
             firstLine = 'module ' + options.baseNamespace + ' {';
@@ -192,16 +194,16 @@ module.exports = function(input, options) {
         }
 
         var lines = [firstLine];
-        
+
         lines = lines.concat(result.split('\n').map(function(line) {
             return '    ' + (/^(?:interface|enum)/.test(line) ? 'export ' + line : line);
         }));
         lines = lines.slice(0, lines.length - 1);
         lines = lines.concat('}');
-        
+
         result = lines.join('\n');
     }
-    
+
     // TODO: Error?  Is this ok?
     return result;
 };

@@ -23,7 +23,10 @@ var expectedOutput = "declare module MyNamespace {\n\
         SomeInt: number;\n\
     }\n\
     \n\
-    export enum MyEnum { One = 0, Two = 1 }\n\
+    export enum MyEnum {\n\
+        One = 0,\n\
+        Two = 1\n\
+    }\n\
 }";
 
 var pocoGen = require('../index.js');
@@ -31,7 +34,7 @@ var pocoGen = require('../index.js');
 describe('typescript-cs-poco', function() {
 	it('should use the baseNamespace option correctly', function() {
 		var result = pocoGen(sampleFile, { baseNamespace: 'MyNamespace' });
-        
+
         expect(result).toEqual(expectedOutput);
 	});
 });
