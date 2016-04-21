@@ -30,7 +30,7 @@ function removeComments(code) {
 }
 
 function generateInterface(className, input, options) {
-    var propertyRegex = /public ([^?\s]*)(\??) ([\w\d]+)\s*{\s*get;\s*set;\s*}/gm;
+    var propertyRegex = /public( virtual)? ([^?\s]*)(\??) ([\w\d]+)\s*{\s*get;\s*set;\s*}/gm;
     var collectionRegex = /(?:List|IEnumerable)<([\w\d]+)>/;
     var arrayRegex = /([\w\d]+)\[\]/;
 
@@ -48,12 +48,12 @@ function generateInterface(className, input, options) {
     }
 
     while (!!(propertyResult = propertyRegex.exec(input))) {
-        var varType = typeTranslation[propertyResult[1]];
+        var varType = typeTranslation[propertyResult[2]];
 
-        var isOptional = propertyResult[2] === '?';
+        var isOptional = propertyResult[3] === '?';
 
         if (!varType) {
-            varType = propertyResult[1];
+            varType = propertyResult[2];
 
             var collectionMatch = collectionRegex.exec(varType);
             var arrayMatch = arrayRegex.exec(varType);
@@ -91,7 +91,7 @@ function generateInterface(className, input, options) {
             }
         }
 
-        var propertyName = propertyResult[3];
+        var propertyName = propertyResult[4];
         if (propertyNameResolver) {
           propertyName = propertyNameResolver(propertyName);
         }
