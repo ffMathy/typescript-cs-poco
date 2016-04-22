@@ -9,7 +9,7 @@ namespace MyNamespace.Domain\n\
 {\n\
     public class MyPoco\n\
     {\n\
-        public virtual IEnumeration<MyOtherPoco> OtherPocos { get; set; }\n\
+        public virtual IEnumerable<MyOtherPoco> OtherPocos { get; set; }\n\
     }\n\
 \n\
     public class MyOtherPoco\n\
@@ -21,8 +21,9 @@ namespace MyNamespace.Domain\n\
 var expectedOutput = "interface MyPoco {\n\
     OtherPocos: MyOtherPoco[];\n\
 }\n\
+\n\
 interface MyOtherPoco {\n\
-    id: int;\n\
+    id: number;\n\
 }\n";
 
 var pocoGen = require('../index.js');
