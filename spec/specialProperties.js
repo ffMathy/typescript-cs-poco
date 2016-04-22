@@ -28,7 +28,7 @@ interface MyOtherPoco {\n\
 var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function() {
-	it('should transform an abstract class correctly', function() {
+	it('should also include properties marked as virtual', function() {
 		var result = pocoGen(sampleFile);
         
         expect(result).toEqual(expectedOutput);
