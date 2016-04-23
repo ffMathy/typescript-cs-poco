@@ -34,6 +34,7 @@ namespace MyNamespace.Domain\n\
             set;\n\ }\n\
         public List<string> ListFields { get; set; }\n\
         public IEnumerable<string> IEnumerableFields { get; set; }\n\
+        public ICollection<string> ICollectionFields { get; set; }\n\
         public string[] ArrayFields { get; set; }\n\
         public bool? OptionalBool {get; set;}\n\
         public DateTime SomeDate {get;set;}\n\
@@ -48,6 +49,7 @@ var expectedOutput = "interface MyPoco extends BasePoco {\n\
     Title: string;\n\
     ListFields: string[];\n\
     IEnumerableFields: string[];\n\
+    ICollectionFields: string[];\n\
     ArrayFields: string[];\n\
     OptionalBool?: boolean;\n\
     SomeDate: string;\n\
