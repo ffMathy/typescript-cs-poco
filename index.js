@@ -10,6 +10,7 @@ typeTranslation.long = 'number';
 typeTranslation.decimal = 'number';
 typeTranslation.bool = 'boolean';
 typeTranslation.DateTime = 'string';
+typeTranslation["System.DateTime"] = 'string';
 typeTranslation.Guid = 'string';
 typeTranslation.JObject = 'any';
 typeTranslation.string = 'string';
@@ -43,8 +44,10 @@ function generateInterface(className, input, options) {
 
     if (options && options.dateTimeToDate) {
       typeTranslation.DateTime = 'Date';
+      typeTranslation["System.DateTime"] = 'Date';
     } else {
       typeTranslation.DateTime = 'string';
+      typeTranslation["System.DateTime"] = 'string';
     }
 
     while (!!(propertyResult = propertyRegex.exec(input))) {
