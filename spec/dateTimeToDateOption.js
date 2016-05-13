@@ -43,6 +43,7 @@ namespace MyNamespace.Domain\n\
         public SomeOtherPoco AnotherPoco {get; set;}\n\
         public List<SomeOtherPoco> MorePocos {get; set;}\n\
         public SomeOtherPoco[] ArrayPocos {get; set;}\n\
+        public System.DateTime SomeSpecifiedDateTime {get; set;}\n\
     }\n\
 }\n";
 
@@ -60,6 +61,7 @@ var expectedOutput = "interface MyPoco {\n\
     AnotherPoco: SomeOtherPoco;\n\
     MorePocos: SomeOtherPoco[];\n\
     ArrayPocos: SomeOtherPoco[];\n\
+    SomeSpecifiedDateTime: Date;\n\
 }\n";
 
 var pocoGen = require('../index.js');
@@ -69,7 +71,7 @@ describe('typescript-cs-poco', function() {
 		var result = pocoGen(sampleFile, {
             dateTimeToDate: true
         });
-        
+
         expect(result).toEqual(expectedOutput);
 	});
 });

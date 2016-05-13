@@ -113,7 +113,7 @@ function generateInterface(className, input, options) {
 }
 
 function generateEnum(enumName, input, options) {
-    var entryRegex = /([^\s,\]]+)\s*=?\s*(\d+)?[,|\s|}]$/gm;
+    var entryRegex = /([^\s,\]\[]+)\s*=?\s*(\d+)?[,|\s]/gm;
     var definition = 'enum ' + enumName + ' {\n    ';
 
     var entryResult;
