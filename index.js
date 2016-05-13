@@ -10,6 +10,7 @@ typeTranslation.long = 'number';
 typeTranslation.decimal = 'number';
 typeTranslation.bool = 'boolean';
 typeTranslation.DateTime = 'string';
+typeTranslation["System.DateTime"] = 'string';
 typeTranslation.Guid = 'string';
 typeTranslation.JObject = 'any';
 typeTranslation.string = 'string';
@@ -43,8 +44,10 @@ function generateInterface(className, input, options) {
 
     if (options && options.dateTimeToDate) {
       typeTranslation.DateTime = 'Date';
+      typeTranslation["System.DateTime"] = 'Date';
     } else {
       typeTranslation.DateTime = 'string';
+      typeTranslation["System.DateTime"] = 'string';
     }
 
     while (!!(propertyResult = propertyRegex.exec(input))) {
@@ -110,7 +113,7 @@ function generateInterface(className, input, options) {
 }
 
 function generateEnum(enumName, input, options) {
-    var entryRegex = /([^\s,]+)\s*=?\s*(\d+)?,?/gm;
+    var entryRegex = /([^\s,\]\[]+)\s*=?\s*(\d+)?[,|\s]/gm;
     var definition = 'enum ' + enumName + ' {\n    ';
 
     var entryResult;
@@ -121,11 +124,6 @@ function generateEnum(enumName, input, options) {
     while(!!(entryResult = entryRegex.exec(input))) {
         var entryName = entryResult[1];
         var entryValue = entryResult[2];
-
-        // Skip attributes, might be a cleaner way in the regex
-        if (entryName.indexOf('[') !== -1) {
-            continue;
-        }
 
         if (!entryValue) {
             entryValue = lastIndex;
