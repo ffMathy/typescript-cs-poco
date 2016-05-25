@@ -159,6 +159,10 @@ module.exports = function(input, options) {
         var typeName = match[3];
         var inherits = match[4];
 
+        if (inherits && options.prefixWithI) {
+            inherits = 'I' + inherits;
+        }
+
         if (result.length > 0) {
             result += '\n';
         }

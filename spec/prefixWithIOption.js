@@ -44,6 +44,15 @@ namespace MyNamespace.Domain\n\
         public List<SomeOtherPoco> MorePocos {get; set;}\n\
         public SomeOtherPoco[] ArrayPocos {get; set;}\n\
     }\n\
+\n\
+    public class ChildPoco : MyPoco\n\
+    {\n\
+      public ChildPoco()\n\
+      {\n\
+      }\n\
+\n\
+      public int SomeOtherThing {get; set; }\n\
+    }\n\
 }\n";
 
 var expectedOutput = "interface IMyPoco {\n\
@@ -60,6 +69,10 @@ var expectedOutput = "interface IMyPoco {\n\
     AnotherPoco: ISomeOtherPoco;\n\
     MorePocos: ISomeOtherPoco[];\n\
     ArrayPocos: ISomeOtherPoco[];\n\
+}\n\
+\n\
+interface IChildPoco extends IMyPoco {\n\
+    SomeOtherThing: number;\n\
 }\n";
 
 var pocoGen = require('../index.js');
