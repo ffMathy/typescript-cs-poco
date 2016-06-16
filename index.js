@@ -55,6 +55,13 @@ function generateInterface(className, input, options) {
 
         var isOptional = propertyResult[3] === '?';
 
+        if (options.ignoreVirtual) {
+          var isVirtual = propertyResult[1] === ' virtual';
+          if (isVirtual) {
+            continue;
+          }
+        }
+
         if (!varType) {
             varType = propertyResult[2];
 

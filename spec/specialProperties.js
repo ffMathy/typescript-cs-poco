@@ -10,6 +10,7 @@ namespace MyNamespace.Domain\n\
     public class MyPoco\n\
     {\n\
         public virtual IEnumerable<MyOtherPoco> OtherPocos { get; set; }\n\
+        public IEnumerable<MyOtherPoco> NonVirtualPocos { get; set; }\n\
     }\n\
 \n\
     public class MyOtherPoco\n\
@@ -20,19 +21,33 @@ namespace MyNamespace.Domain\n\
 
 var expectedOutput = "interface MyPoco {\n\
     OtherPocos: MyOtherPoco[];\n\
+    NonVirtualPocos: MyOtherPoco[];\n\
 }\n\
 \n\
 interface MyOtherPoco {\n\
     id: number;\n\
 }\n";
 
+var expectedWithoutVirtuals = "interface MyPoco {\n\
+    NonVirtualPocos: MyOtherPoco[];\n\
+}\n\
+\n\
+interface MyOtherPoco {\n\
+    id: number;\n\
+}\n";
 var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function() {
-	it('should also include properties marked as virtual', function() {
-		var result = pocoGen(sampleFile);
+	it('should include properties marked as virtual', function() {
+    var result = pocoGen(sampleFile);
         
-        expect(result).toEqual(expectedOutput);
+    expect(result).toEqual(expectedOutput);
+	});
+
+	it('should not include properties marked as virtual if option is set', function() {
+    var result = pocoGen(sampleFile, { ignoreVirtual: true });
+        
+    expect(result).toEqual(expectedWithoutVirtuals);
 	});
 });
 
