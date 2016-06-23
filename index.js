@@ -31,7 +31,7 @@ function removeComments(code) {
 }
 
 function generateInterface(className, input, options) {
-    var propertyRegex = /public( virtual)? ([^?\s]*)(\??) ([\w\d]+)\s*{\s*get;\s*set;\s*}/gm;
+    var propertyRegex = /public( virtual)? ([^?\s]*)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*})/gm;
     var collectionRegex = /(?:List|IEnumerable|ICollection)<([\w\d]+)>/;
     var arrayRegex = /([\w\d]+)\[\]/;
 
