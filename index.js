@@ -18,7 +18,7 @@ typeTranslation.dynamic = 'any';
 
 var blockCommentRegex = new RegExp('/\\*([\\s\\S]*)\\*/', 'gm');
 var lineCommentRegex = new RegExp('//(.*)', 'g');
-var typeRegex = /^([\t ]*)(?:public\s*|partial\s*|abstract\s*)*\s*(class|enum|struct)\s+([\w\d_<>]+)(?:\s*:\s*((?:(?:[\w\d\._]+)(?:,\s+)?)+))?\s*\{((?:.|\n|\r)*?)^\1\}/gm;
+var typeRegex = /^([\t ]*)(?:public\s*|partial\s*|abstract\s*)*\s*(class|enum|struct|interface)\s+([\w\d_<>]+)(?:\s*:\s*((?:(?:[\w\d\._]+)(?:,\s+)?)+))?\s*\{((?:.|\n|\r)*?)^\1\}/gm;
 
 function removeComments(code) {
     var output = code.replace(blockCommentRegex, '');
@@ -174,7 +174,7 @@ module.exports = function(input, options) {
             result += '\n';
         }
 
-        if (type === 'class' || type === 'struct') {
+        if (type === 'class' || type === 'struct' || (type === 'interface' && options.includeInterfaces)) {
             if (inherits && (!ignoreInheritance || ignoreInheritance.indexOf(inherits) === -1)) {
                 typeName += ' extends ' + inherits;
             }
