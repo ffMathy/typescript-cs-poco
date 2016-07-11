@@ -45,6 +45,7 @@ namespace MyNamespace.Domain\n\
         public Guid SomeGuid {get;set;}\n\
         public JObject DynamicContents { get; set; }\n\
         public dynamic DynamicToAny { get; set; }\n\
+        public object ObjectToAny { get; set; }\n\
     }\n\
 }\n";
 
@@ -63,6 +64,7 @@ var expectedOutput = "interface MyPoco {\n\
     SomeGuid: string;\n\
     DynamicContents: any;\n\
     DynamicToAny: any;\n\
+    ObjectToAny: any;\n\
 }\n";
 
 var pocoGen = require('../index.js');
