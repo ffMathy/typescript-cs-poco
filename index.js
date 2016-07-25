@@ -51,6 +51,12 @@ function generateInterface(className, input, options) {
       typeTranslation["System.DateTime"] = 'string';
     }
 
+    if (options && options.customTypeTranslations) {
+      for (var key in options.customTypeTranslations) {
+        typeTranslation[key] = options.customTypeTranslations[key];
+      }
+    }
+
     while (!!(propertyResult = propertyRegex.exec(input))) {
         var varType = typeTranslation[propertyResult[2]];
 
