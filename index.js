@@ -34,6 +34,7 @@ function removeComments(code) {
 function generateInterface(className, input, options) {
     var propertyRegex = /public( virtual)? ([^?\s]*)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
     var collectionRegex = /(?:List|IEnumerable|ICollection)<([\w\d]+)>/;
+    var genericPropertyRegex = /([\w\d]+)<([\w\d]+)>/;
     var arrayRegex = /([\w\d]+)\[\]/;
 
     var definition = 'interface ' + className + ' {\n';
@@ -59,7 +60,7 @@ function generateInterface(className, input, options) {
 
     while (!!(propertyResult = propertyRegex.exec(input))) {
         var varType = typeTranslation[propertyResult[2]];
-
+        
         var isOptional = propertyResult[3] === '?';
 
         if (options.ignoreVirtual) {
@@ -74,6 +75,7 @@ function generateInterface(className, input, options) {
 
             var collectionMatch = collectionRegex.exec(varType);
             var arrayMatch = arrayRegex.exec(varType);
+            var genericPropertyMatch = genericPropertyRegex.exec(varType);
 
             if (collectionMatch) {
                 var collectionType = collectionMatch[1];
@@ -103,6 +105,19 @@ function generateInterface(className, input, options) {
                 }
 
                 varType += '[]';
+            } else if (genericPropertyMatch) {
+                var generic = genericPropertyMatch[1];
+                var genericType = genericPropertyMatch[2];
+
+                if (typeTranslation[genericType]) {
+                    varType = generic + '<' + typeTranslation[genericType] + '>';
+                } else {
+                    varType = generic + '<' + genericType + '>';
+
+                    if (prefixFieldsWithI) {
+                        varType = 'I' + varType;
+                    }
+                }
             } else if (prefixFieldsWithI) {
                 varType = 'I' + varType;
             }
