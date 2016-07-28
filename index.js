@@ -60,7 +60,7 @@ function generateInterface(className, input, options) {
 
     while (!!(propertyResult = propertyRegex.exec(input))) {
         var varType = typeTranslation[propertyResult[2]];
-        
+
         var isOptional = propertyResult[3] === '?';
 
         if (options.ignoreVirtual) {
