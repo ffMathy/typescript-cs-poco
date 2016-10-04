@@ -11,26 +11,26 @@ namespace MyNamespace.Domain\n\
     {\n\
         public int Id { get; set; }\n\
         public string NameOfStuff { get; set; }\n\
-        public string Foo() { }\n\
+        public string Title { get; set; }\n\
     }\n\
 }\n";
 
-var expectedOutput = "interface MyPoco {\n\
+var expectedOutput = "interface myPoco {\n\
     Id: number;\n\
     NameOfStuff: string;\n\
-    foo(): string;\n\
+    Title: string;\n\
 }\n";
 
 var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function () {
-    it('should use the methodNameResolver option correctly', function () {
-        var result = pocoGen(sampleFile, { methodNameResolver: camelCaseResolver });
+    it('should use the interfaceNameResolver option correctly', function () {
+        var result = pocoGen(sampleFile, { interfaceNameResolver: camelCaseResolver });
 
         expect(result).toEqual(expectedOutput);
 
-        function camelCaseResolver(methodName) {
-            return methodName[0].toLowerCase() + methodName.substring(1);
+        function camelCaseResolver(interfaceName) {
+            return interfaceName[0].toLowerCase() + interfaceName.substring(1);
         }
     });
 });
