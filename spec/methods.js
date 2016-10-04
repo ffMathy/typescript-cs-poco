@@ -30,6 +30,11 @@ namespace MyNamespace.Domain\n\
             //foobar\n\
         }\n\
     }\n\
+    public async Task<IEnumerable<string>> MethodWithSingleParameterAsyncAndTaskStringArrayReturnType(string baz) { \n\
+        if(true) {\n\
+            //foobar\n\
+        }\n\
+    }\n\
     public async Task MethodWithSingleParameterAsyncAndTaskVoidReturnType(string baz) { \n\
         if(true) {\n\
             //foobar\n\
@@ -53,7 +58,8 @@ var expectedOutput = "interface MyPoco {\n\
     MethodWithMultipleParameters(baz: string, buz: int): string;\n\
     MethodWithMultipleParametersAnnotated(baz: string, buz: int): string;\n\
     MethodWithSingleParameterAsyncAndTaskStringReturnType(baz: string): Promise<string>;\n\
-    MethodWithSingleParameterAsyncAndTaskVoidReturnType(baz: string): void;\n\
+    MethodWithSingleParameterAsyncAndTaskStringArrayReturnType(baz: string): Promise<string[]>;\n\
+    MethodWithSingleParameterAsyncAndTaskVoidReturnType(baz: string): Promise<void>;\n\
     MethodWithSingleParameter(baz: string): string;\n\
     EmptyMethodWithNewLineParameters(baz: string, buz: int): string;\n\
     EmptyVoid(): void;\n\
