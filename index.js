@@ -33,7 +33,7 @@ function removeComments(code) {
 
 function generateInterface(className, input, options) {
     var propertyRegex = /public( virtual)? ([^?\s]*)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
-    var methodRegex = /public( virtual)?(?: async)? ([^?\s]*) ([\w\d]+)\(((?:.?\s?)*?)\)\s*\{(?:.?\s?)*?\}/gm;
+    var methodRegex = /public( virtual)?( async)? ([^?\s]*) ([\w\d]+)\(((?:.?\s?)*?)\)\s*\{(?:.?\s?)*?\}/gm;
     
     var propertyNameResolver = options && options.propertyNameResolver;
     var methodNameResolver = options && options.methodNameResolver;
@@ -88,22 +88,31 @@ function generateInterface(className, input, options) {
 
     var methodResult;
     while (!!(methodResult = methodRegex.exec(input))) {
-        var varType = getVarType(methodResult[2]);
+        var varType = getVarType(methodResult[3]);
+
+        var isAsync = methodResult[2] === ' async';
+        if(isAsync) {
+            if(varType.indexOf('<') > -1 && varType.indexOf('>') > -1) {
+                varType = varType.replace(/Task\<([^?\s]*)\>/gm, '$1');
+            } else {
+                varType = varType.replace('Task', 'void');
+            }
+        }
         
         if (options && options.ignoreVirtual) {
-            var isVirtual = propertyResult[1] === ' virtual';
+            var isVirtual = methodResult[1] === ' virtual';
             if (isVirtual) {
                 continue;
             }
         }
 
-        var propertyName = methodResult[3];
+        var propertyName = methodResult[4];
         if (methodNameResolver) {
             propertyName = methodNameResolver(propertyName);
         }
         definition += leadingWhitespace + propertyName + '(';
 
-        var arguments = methodResult[4];
+        var arguments = methodResult[5];
         var argumentsRegex = /\s*(?:\[[\w\d]+\])?([^?\s]*) ([\w\d]+)(?:\,\s*)?/gm;
 
         var argumentResult;
