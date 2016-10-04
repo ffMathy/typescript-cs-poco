@@ -33,16 +33,12 @@ function removeComments(code) {
 
 function generateInterface(className, input, options) {
     var propertyRegex = /public( virtual)? ([^?\s]*)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
-    var collectionRegex = /(?:List|IEnumerable|ICollection)<([\w\d]+)>/;
-    var genericPropertyRegex = /([\w\d]+)<([\w\d]+)>/;
-    var arrayRegex = /([\w\d]+)\[\]/;
+    var methodRegex = /public( virtual)?(?: async)? ([^?\s]*) ([\w\d]+)\(((?:.?\s?)*?)\)\s*\{(?:.?\s?)*?\}/gm;
 
     var definition = 'interface ' + className + ' {\n';
-
-    var propertyResult;
-
-    var prefixFieldsWithI = options && options.prefixWithI;
+    
     var propertyNameResolver = options && options.propertyNameResolver;
+    var methodNameResolver = options && options.methodNameResolver;
 
     if (options && options.dateTimeToDate) {
       typeTranslation.DateTime = 'Date';
@@ -58,76 +54,26 @@ function generateInterface(className, input, options) {
       }
     }
 
+    var leadingWhitespace = '    ';
+
+    var propertyResult;
     while (!!(propertyResult = propertyRegex.exec(input))) {
-        var varType = typeTranslation[propertyResult[2]];
+        var varType = getVarType(propertyResult[2]);
 
         var isOptional = propertyResult[3] === '?';
 
         if (options.ignoreVirtual) {
-          var isVirtual = propertyResult[1] === ' virtual';
-          if (isVirtual) {
-            continue;
-          }
-        }
-
-        if (!varType) {
-            varType = propertyResult[2];
-
-            var collectionMatch = collectionRegex.exec(varType);
-            var arrayMatch = arrayRegex.exec(varType);
-            var genericPropertyMatch = genericPropertyRegex.exec(varType);
-
-            if (collectionMatch) {
-                var collectionType = collectionMatch[1];
-
-                if (typeTranslation[collectionType]) {
-                    varType = typeTranslation[collectionType];
-                } else {
-                    varType = collectionType;
-
-                    if (prefixFieldsWithI) {
-                        varType = 'I' + varType;
-                    }
-                }
-
-                varType += '[]';
-            } else if (arrayMatch) {
-                var arrayType = arrayMatch[1];
-
-                if (typeTranslation[arrayType]) {
-                    varType = typeTranslation[arrayType];
-                } else {
-                    varType = arrayType;
-
-                    if (prefixFieldsWithI) {
-                        varType = 'I' + varType;
-                    }
-                }
-
-                varType += '[]';
-            } else if (genericPropertyMatch) {
-                var generic = genericPropertyMatch[1];
-                var genericType = genericPropertyMatch[2];
-
-                if (typeTranslation[genericType]) {
-                    varType = generic + '<' + typeTranslation[genericType] + '>';
-                } else {
-                    varType = generic + '<' + genericType + '>';
-
-                    if (prefixFieldsWithI) {
-                        varType = 'I' + varType;
-                    }
-                }
-            } else if (prefixFieldsWithI) {
-                varType = 'I' + varType;
+            var isVirtual = propertyResult[1] === ' virtual';
+            if (isVirtual){ 
+                continue;
             }
         }
 
-        var propertyName = propertyResult[4];
+        var methodName = propertyResult[4];
         if (propertyNameResolver) {
-          propertyName = propertyNameResolver(propertyName);
+          methodName = propertyNameResolver(methodName);
         }
-        definition += '    ' + propertyName;
+        definition += leadingWhitespace + methodName;
 
         if (isOptional) {
             definition += '?';
@@ -136,9 +82,92 @@ function generateInterface(className, input, options) {
         definition += ': ' + varType + ';\n';
     }
 
+    var methodResult;
+    while (!!(methodResult = methodRegex.exec(input))) {
+        var varType = getVarType(methodResult[2]);
+        
+        if (options.ignoreVirtual) {
+            var isVirtual = propertyResult[1] === ' virtual';
+            if (isVirtual) {
+                continue;
+            }
+        }
+
+        var methodName = methodResult[3];
+        if (methodNameResolver) {
+            methodName = methodNameResolver(methodName);
+        }
+        definition += leadingWhitespace + methodName + '(';
+
+        var arguments = methodResult[4];
+        var argumentsRegex = /\s*(?:\[[\w\d]+\])??([^?\s]*) ([\w\d]+)(?:\,\s*)?/gm;
+        console.log(arguments);
+
+        var argumentResult;
+        var argumentDefinition = '';
+        while (!!(argumentResult = argumentsRegex.exec(arguments))) {
+            if (argumentDefinition !== '') {
+                argumentDefinition += ', ';
+            }
+            argumentDefinition += argumentResult[2] + ': ' + argumentResult[1];
+        }
+
+        definition += argumentDefinition;
+
+        definition += '): ' + varType + ';\n';
+    }
+
     definition += '}\n';
 
     return definition;
+}
+
+function getVarType(typeCandidate) {
+    var collectionRegex = /(?:List|IEnumerable|ICollection)<([\w\d]+)>/;
+    var genericPropertyRegex = /([\w\d]+)<([\w\d]+)>/;
+    var arrayRegex = /([\w\d]+)\[\]/;
+
+    var varType = typeTranslation[typeCandidate];
+    if (!varType) {
+        varType = typeCandidate;
+
+        var collectionMatch = collectionRegex.exec(varType);
+        var arrayMatch = arrayRegex.exec(varType);
+        var genericPropertyMatch = genericPropertyRegex.exec(varType);
+
+        if (collectionMatch) {
+            var collectionType = collectionMatch[1];
+
+            if (typeTranslation[collectionType]) {
+                varType = typeTranslation[collectionType];
+            } else {
+                varType = collectionType;
+            }
+
+            varType += '[]';
+        } else if (arrayMatch) {
+            var arrayType = arrayMatch[1];
+
+            if (typeTranslation[arrayType]) {
+                varType = typeTranslation[arrayType];
+            } else {
+                varType = arrayType;
+            }
+
+            varType += '[]';
+        } else if (genericPropertyMatch) {
+            var generic = genericPropertyMatch[1];
+            var genericType = genericPropertyMatch[2];
+
+            if (typeTranslation[genericType]) {
+                varType = generic + '<' + typeTranslation[genericType] + '>';
+            } else {
+                varType = generic + '<' + genericType + '>';
+            }
+        }
+    }
+
+    return varType;
 }
 
 function generateEnum(enumName, input, options) {
