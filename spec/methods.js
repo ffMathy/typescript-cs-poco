@@ -20,6 +20,11 @@ namespace MyNamespace.Domain\n\
             //foobar\n\
         }\n\
     }\n\
+    public string MethodWithMultipleParametersAnnotated([Annotation1]string baz, [Annotation2]int buz) { \n\
+        if(true) {\n\
+            //foobar\n\
+        }\n\
+    }\n\
     public string MethodWithSingleParameter(string baz) { \n\
         if(true) {\n\
             //foobar\n\
@@ -36,6 +41,7 @@ namespace MyNamespace.Domain\n\
 var expectedOutput = "interface MyPoco {\n\
     MethodWithNoParameters(): string;\n\
     MethodWithMultipleParameters(baz: string, buz: int): string;\n\
+    MethodWithMultipleParametersAnnotated(baz: string, buz: int): string;\n\
     MethodWithSingleParameter(baz: string): string;\n\
     EmptyMethodWithNewLineParameters(baz: string, buz: int): string;\n\
     EmptyVoid(): void;\n\
