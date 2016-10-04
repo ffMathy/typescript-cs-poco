@@ -104,7 +104,7 @@ function generateInterface(className, input, options) {
         definition += leadingWhitespace + propertyName + '(';
 
         var arguments = methodResult[4];
-        var argumentsRegex = /\s*(?:\[[\w\d]+\])??([^?\s]*) ([\w\d]+)(?:\,\s*)?/gm;
+        var argumentsRegex = /\s*(?:\[[\w\d]+\])?([^?\s]*) ([\w\d]+)(?:\,\s*)?/gm;
 
         var argumentResult;
         var argumentDefinition = '';
