@@ -55,13 +55,13 @@ namespace MyNamespace.Domain\n\
 
 var expectedOutput = "interface MyPoco {\n\
     MethodWithNoParameters(): string;\n\
-    MethodWithMultipleParameters(baz: string, buz: int): string;\n\
-    MethodWithMultipleParametersAnnotated(baz: string, buz: int): string;\n\
+    MethodWithMultipleParameters(baz: string, buz: number): string;\n\
+    MethodWithMultipleParametersAnnotated(baz: string, buz: number): string;\n\
     MethodWithSingleParameterAsyncAndTaskStringReturnType(baz: string): Promise<string>;\n\
     MethodWithSingleParameterAsyncAndTaskStringArrayReturnType(baz: string): Promise<string[]>;\n\
     MethodWithSingleParameterAsyncAndTaskVoidReturnType(baz: string): Promise<void>;\n\
     MethodWithSingleParameter(baz: string): string;\n\
-    EmptyMethodWithNewLineParameters(baz: string, buz: int): string;\n\
+    EmptyMethodWithNewLineParameters(baz: string, buz: number): string;\n\
     EmptyVoid(): void;\n\
 }\n";
 

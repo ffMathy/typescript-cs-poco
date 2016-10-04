@@ -121,7 +121,7 @@ function generateInterface(className, input, options) {
             if (argumentDefinition !== '') {
                 argumentDefinition += ', ';
             }
-            argumentDefinition += argumentResult[2] + ': ' + argumentResult[1];
+            argumentDefinition += argumentResult[2] + ': ' + getVarType(argumentResult[1]);
         }
 
         definition += argumentDefinition;
@@ -141,7 +141,6 @@ function getVarType(typeCandidate) {
 
     var varType = typeTranslation[typeCandidate];
     if (varType) {
-        console.log(typeCandidate + ' has translation ' + varType);
         return varType;
     }
     
@@ -155,22 +154,18 @@ function getVarType(typeCandidate) {
         var collectionType = collectionMatch[1];
         var collectionContentType = collectionMatch[2];
 
-        console.log('Resolving collection inner type ' + collectionContentType + ' of ' + varType);
         varType = getVarType(collectionContentType) + '[]';
     } else if (arrayMatch) {
         var arrayType = arrayMatch[1];
 
-        console.log('Resolving array type ' + arrayType + ' of ' + varType);
         varType = getVarType(arrayType) + '[]';
     } else if (genericPropertyMatch) {
         var generic = genericPropertyMatch[1];
         var genericType = genericPropertyMatch[2];
 
-        console.log('Resolving generic type ' + genericType + ' of ' + varType);
         varType = generic + '<' + getVarType(genericType) + '>';
     }
 
-    console.log(' -> Resolved to ' + varType);
     return varType;
 }
 
