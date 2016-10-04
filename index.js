@@ -94,6 +94,7 @@ function generateInterface(className, input, options) {
         if(isAsync) {
             if(varType.indexOf('<') > -1 && varType.indexOf('>') > -1) {
                 varType = varType.replace(/Task\<([^?\s]*)\>/gm, '$1');
+                varType = 'Promise<' + varType + '>';
             } else {
                 varType = varType.replace('Task', 'void');
             }

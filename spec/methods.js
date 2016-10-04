@@ -52,7 +52,7 @@ var expectedOutput = "interface MyPoco {\n\
     MethodWithNoParameters(): string;\n\
     MethodWithMultipleParameters(baz: string, buz: int): string;\n\
     MethodWithMultipleParametersAnnotated(baz: string, buz: int): string;\n\
-    MethodWithSingleParameterAsyncAndTaskStringReturnType(baz: string): string;\n\
+    MethodWithSingleParameterAsyncAndTaskStringReturnType(baz: string): Promise<string>;\n\
     MethodWithSingleParameterAsyncAndTaskVoidReturnType(baz: string): void;\n\
     MethodWithSingleParameter(baz: string): string;\n\
     EmptyMethodWithNewLineParameters(baz: string, buz: int): string;\n\
