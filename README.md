@@ -5,4 +5,4 @@ Generates a Typescript type definition file for a C# POCO class.  Takes in a str
 
 ## Current wrappers
 
-Right now the only wrapper is for Gulp and is located at https://github.com/Evertras/gulp-typescript-cs-poco .  Please see this link for documentation on use and available options.
+Right now the only wrapper is for Gulp and is located at https://github.com/Evertras/gulp-typescript-cs-poco. Please see this link for documentation on use and available options.

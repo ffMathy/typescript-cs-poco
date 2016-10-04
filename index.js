@@ -34,24 +34,28 @@ function removeComments(code) {
 function generateInterface(className, input, options) {
     var propertyRegex = /public( virtual)? ([^?\s]*)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
     var methodRegex = /public( virtual)?(?: async)? ([^?\s]*) ([\w\d]+)\(((?:.?\s?)*?)\)\s*\{(?:.?\s?)*?\}/gm;
-
-    var definition = 'interface ' + className + ' {\n';
     
     var propertyNameResolver = options && options.propertyNameResolver;
     var methodNameResolver = options && options.methodNameResolver;
+    var interfaceNameResolver = options && options.interfaceNameResolver;
+    
+    if (interfaceNameResolver) {
+        className = interfaceNameResolver(className);
+    }
+    var definition = 'interface ' + className + ' {\n';
 
     if (options && options.dateTimeToDate) {
-      typeTranslation.DateTime = 'Date';
-      typeTranslation["System.DateTime"] = 'Date';
+        typeTranslation.DateTime = 'Date';
+        typeTranslation["System.DateTime"] = 'Date';
     } else {
-      typeTranslation.DateTime = 'string';
-      typeTranslation["System.DateTime"] = 'string';
+        typeTranslation.DateTime = 'string';
+        typeTranslation["System.DateTime"] = 'string';
     }
 
     if (options && options.customTypeTranslations) {
-      for (var key in options.customTypeTranslations) {
-        typeTranslation[key] = options.customTypeTranslations[key];
-      }
+        for (var key in options.customTypeTranslations) {
+            typeTranslation[key] = options.customTypeTranslations[key];
+        }
     }
 
     var leadingWhitespace = '    ';
@@ -62,18 +66,18 @@ function generateInterface(className, input, options) {
 
         var isOptional = propertyResult[3] === '?';
 
-        if (options.ignoreVirtual) {
+        if (options && options.ignoreVirtual) {
             var isVirtual = propertyResult[1] === ' virtual';
             if (isVirtual){ 
                 continue;
             }
         }
 
-        var methodName = propertyResult[4];
+        var propertyName = propertyResult[4];
         if (propertyNameResolver) {
-          methodName = propertyNameResolver(methodName);
+            propertyName = propertyNameResolver(propertyName);
         }
-        definition += leadingWhitespace + methodName;
+        definition += leadingWhitespace + propertyName;
 
         if (isOptional) {
             definition += '?';
@@ -86,22 +90,21 @@ function generateInterface(className, input, options) {
     while (!!(methodResult = methodRegex.exec(input))) {
         var varType = getVarType(methodResult[2]);
         
-        if (options.ignoreVirtual) {
+        if (options && options.ignoreVirtual) {
             var isVirtual = propertyResult[1] === ' virtual';
             if (isVirtual) {
                 continue;
             }
         }
 
-        var methodName = methodResult[3];
+        var propertyName = methodResult[3];
         if (methodNameResolver) {
-            methodName = methodNameResolver(methodName);
+            propertyName = methodNameResolver(propertyName);
         }
-        definition += leadingWhitespace + methodName + '(';
+        definition += leadingWhitespace + propertyName + '(';
 
         var arguments = methodResult[4];
         var argumentsRegex = /\s*(?:\[[\w\d]+\])??([^?\s]*) ([\w\d]+)(?:\,\s*)?/gm;
-        console.log(arguments);
 
         var argumentResult;
         var argumentDefinition = '';
@@ -217,8 +220,9 @@ module.exports = function(input, options) {
         var typeName = match[3];
         var inherits = match[4];
 
-        if (inherits && options.prefixWithI) {
-            inherits = 'I' + inherits;
+        var interfaceNameResolver = options.interfaceNameResolver;
+        if (inherits && interfaceNameResolver) {
+            inherits = interfaceNameResolver(inherits);
         }
 
         if (result.length > 0) {
@@ -230,8 +234,8 @@ module.exports = function(input, options) {
                 typeName += ' extends ' + inherits;
             }
 
-            if (options.prefixWithI) {
-                typeName = 'I' + typeName;
+            if (interfaceNameResolver) {
+                typeName = interfaceNameResolver(typeName);
             }
 
             result += generateInterface(typeName, match[5], options);
@@ -263,7 +267,6 @@ module.exports = function(input, options) {
 
         result = lines.join('\n');
     }
-
-    // TODO: Error?  Is this ok?
+    
     return result;
 };
