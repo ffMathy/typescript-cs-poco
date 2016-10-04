@@ -10,10 +10,9 @@ typeTranslation.long = 'number';
 typeTranslation.decimal = 'number';
 typeTranslation.bool = 'boolean';
 typeTranslation.DateTime = 'string';
-typeTranslation["System.DateTime"] = 'string';
 typeTranslation.Guid = 'string';
-typeTranslation.JObject = 'any';
 typeTranslation.string = 'string';
+typeTranslation.JObject = 'any';
 typeTranslation.dynamic = 'any';
 typeTranslation.object = 'any';
 
@@ -93,10 +92,10 @@ function generateInterface(className, input, options) {
         var isAsync = methodResult[2] === ' async';
         if(isAsync) {
             if(varType.indexOf('<') > -1 && varType.indexOf('>') > -1) {
-                varType = varType.replace(/Task\<([^?\s]*)\>/gm, '$1');
+                varType = varType.replace(/^Task\<([^?\s]*)\>$/gm, '$1');
                 varType = 'Promise<' + varType + '>';
             } else {
-                varType = varType.replace('Task', 'void');
+                varType = varType.replace('Task', 'Promise<void>');
             }
         }
         
@@ -136,50 +135,42 @@ function generateInterface(className, input, options) {
 }
 
 function getVarType(typeCandidate) {
-    var collectionRegex = /(?:List|IEnumerable|ICollection)<([\w\d]+)>/;
-    var genericPropertyRegex = /([\w\d]+)<([\w\d]+)>/;
-    var arrayRegex = /([\w\d]+)\[\]/;
+    var collectionRegex = /^(I?List|IEnumerable|ICollection|HashSet)<([\w\d]+)>$/;
+    var genericPropertyRegex = /^([\w\d]+)<([\w\d\<\>]+)>$/;
+    var arrayRegex = /^([\w\d]+)\[\]$/;
 
     var varType = typeTranslation[typeCandidate];
-    if (!varType) {
-        varType = typeCandidate;
+    if (varType) {
+        console.log(typeCandidate + ' has translation ' + varType);
+        return varType;
+    }
+    
+    varType = typeCandidate;
 
-        var collectionMatch = collectionRegex.exec(varType);
-        var arrayMatch = arrayRegex.exec(varType);
-        var genericPropertyMatch = genericPropertyRegex.exec(varType);
+    var collectionMatch = collectionRegex.exec(varType);
+    var arrayMatch = arrayRegex.exec(varType);
+    var genericPropertyMatch = genericPropertyRegex.exec(varType);
 
-        if (collectionMatch) {
-            var collectionType = collectionMatch[1];
+    if (collectionMatch) {
+        var collectionType = collectionMatch[1];
+        var collectionContentType = collectionMatch[2];
 
-            if (typeTranslation[collectionType]) {
-                varType = typeTranslation[collectionType];
-            } else {
-                varType = collectionType;
-            }
+        console.log('Resolving collection inner type ' + collectionContentType + ' of ' + varType);
+        varType = getVarType(collectionContentType) + '[]';
+    } else if (arrayMatch) {
+        var arrayType = arrayMatch[1];
 
-            varType += '[]';
-        } else if (arrayMatch) {
-            var arrayType = arrayMatch[1];
+        console.log('Resolving array type ' + arrayType + ' of ' + varType);
+        varType = getVarType(arrayType) + '[]';
+    } else if (genericPropertyMatch) {
+        var generic = genericPropertyMatch[1];
+        var genericType = genericPropertyMatch[2];
 
-            if (typeTranslation[arrayType]) {
-                varType = typeTranslation[arrayType];
-            } else {
-                varType = arrayType;
-            }
-
-            varType += '[]';
-        } else if (genericPropertyMatch) {
-            var generic = genericPropertyMatch[1];
-            var genericType = genericPropertyMatch[2];
-
-            if (typeTranslation[genericType]) {
-                varType = generic + '<' + typeTranslation[genericType] + '>';
-            } else {
-                varType = generic + '<' + genericType + '>';
-            }
-        }
+        console.log('Resolving generic type ' + genericType + ' of ' + varType);
+        varType = generic + '<' + getVarType(genericType) + '>';
     }
 
+    console.log(' -> Resolved to ' + varType);
     return varType;
 }
 
