@@ -37,6 +37,7 @@ function generateInterface(className, input, options) {
     var propertyNameResolver = options && options.propertyNameResolver;
     var methodNameResolver = options && options.methodNameResolver;
     var interfaceNameResolver = options && options.interfaceNameResolver;
+    var typeResolver = options && options.typeResolver;
     
     if (interfaceNameResolver) {
         className = interfaceNameResolver(className);
@@ -61,7 +62,7 @@ function generateInterface(className, input, options) {
 
     var propertyResult;
     while (!!(propertyResult = propertyRegex.exec(input))) {
-        var varType = getVarType(propertyResult[2]);
+        var varType = getVarType(propertyResult[2], "property-type", typeResolver);
 
         var isOptional = propertyResult[3] === '?';
 
@@ -87,7 +88,7 @@ function generateInterface(className, input, options) {
 
     var methodResult;
     while (!!(methodResult = methodRegex.exec(input))) {
-        var varType = getVarType(methodResult[3]);
+        var varType = getVarType(methodResult[3], "method-return-type", typeResolver);
 
         var isAsync = methodResult[2] === ' async';
         if(isAsync) {
@@ -121,7 +122,7 @@ function generateInterface(className, input, options) {
             if (argumentDefinition !== '') {
                 argumentDefinition += ', ';
             }
-            argumentDefinition += argumentResult[2] + ': ' + getVarType(argumentResult[1]);
+            argumentDefinition += argumentResult[2] + ': ' + getVarType(argumentResult[1], "method-argument-type", typeResolver);
         }
 
         definition += argumentDefinition;
@@ -134,12 +135,16 @@ function generateInterface(className, input, options) {
     return definition;
 }
 
-function getVarType(typeCandidate) {
+function getVarType(typeCandidate, scope, typeResolver) {
     var collectionRegex = /^(I?List|IEnumerable|ICollection|HashSet)<([\w\d]+)>$/;
     var genericPropertyRegex = /^([\w\d]+)<([\w\d\<\>]+)>$/;
     var arrayRegex = /^([\w\d]+)\[\]$/;
 
     var varType = typeTranslation[typeCandidate];
+    if(typeResolver) {
+        varType = typeResolver(varType, scope);
+    }
+    
     if (varType) {
         return varType;
     }
