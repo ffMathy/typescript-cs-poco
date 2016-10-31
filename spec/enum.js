@@ -19,6 +19,7 @@ namespace MyNamespace.Domain\n\
         */\n\
         [SomeAttribute(64)]\n\
         Pink = 10, Ultraviolet\n\
+        Foo=1337\n\
     }\n\
 }\n";
 
@@ -27,7 +28,8 @@ var expectedOutput = "declare enum MyEnum {\n\
     Red = 1,\n\
     Blue = 2,\n\
     Pink = 10,\n\
-    Ultraviolet = 11\n\
+    Ultraviolet = 11,\n\
+    Foo = 1337\n\
 }\n";
 
 var pocoGen = require('../index.js');
