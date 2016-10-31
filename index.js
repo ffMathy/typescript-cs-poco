@@ -30,8 +30,8 @@ function removeComments(code) {
     return lines.join('\n');
 }
 
-function generateInterface(className, input, options) {
-    var propertyRegex = /public( virtual)? ([\w\d\._<>, \[\]]+?)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
+function generateInterface(className, input, isInterface, options) {
+    var propertyRegex = /\s*(?:(public) )?(?:(virtual) )?([\w\d\._<>, \[\]]+?)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
     var methodRegex = /public( virtual)?( async)? ([^?\s]*) ([\w\d]+)\(((?:.?\s?)*?)\)\s*\{(?:.?\s?)*?\}/gm;
     
     var propertyNameResolver = options && options.propertyNameResolver;
@@ -62,18 +62,21 @@ function generateInterface(className, input, options) {
 
     var propertyResult;
     while (!!(propertyResult = propertyRegex.exec(input))) {
-        var varType = getVarType(propertyResult[2], "property-type", typeResolver);
+        var visibility = propertyResult[1];
+        if(!isInterface && visibility !== 'public') continue;
 
-        var isOptional = propertyResult[3] === '?';
+        var varType = getVarType(propertyResult[3], "property-type", typeResolver);
+
+        var isOptional = propertyResult[4] === '?';
 
         if (options && options.ignoreVirtual) {
-            var isVirtual = propertyResult[1] === ' virtual';
+            var isVirtual = propertyResult[2] === 'virtual';
             if (isVirtual){ 
                 continue;
             }
         }
 
-        var propertyName = propertyResult[4];
+        var propertyName = propertyResult[5];
         if (propertyNameResolver) {
             propertyName = propertyNameResolver(propertyName);
         }
@@ -101,17 +104,17 @@ function generateInterface(className, input, options) {
         }
         
         if (options && options.ignoreVirtual) {
-            var isVirtual = methodResult[1] === ' virtual';
+            var isVirtual = methodResult[1] === 'virtual';
             if (isVirtual) {
                 continue;
             }
         }
 
-        var propertyName = methodResult[4];
+        var methodName = methodResult[4];
         if (methodNameResolver) {
-            propertyName = methodNameResolver(propertyName);
+            methodName = methodNameResolver(methodName);
         }
-        definition += leadingWhitespace + propertyName + '(';
+        definition += leadingWhitespace + methodName + '(';
 
         var arguments = methodResult[5];
         var argumentsRegex = /\s*(?:\[[\w\d]+\])?([^?\s]*) ([\w\d]+)(?:\,\s*)?/gm;
@@ -231,7 +234,6 @@ module.exports = function(input, options) {
     }
 
     var ignoreInheritance = options && options.ignoreInheritance;
-
     while (!!(match = typeRegex.exec(input))) {
         var type = match[2];
         var typeName = match[3];
@@ -255,7 +257,7 @@ module.exports = function(input, options) {
                 typeName = interfaceNameResolver(typeName);
             }
 
-            result += generateInterface(typeName, match[5], options);
+            result += generateInterface(typeName, match[5], type === 'interface', options);
         } else if (type === 'enum') {
             if (!options.baseNamespace) {
               result += 'declare ';
