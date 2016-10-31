@@ -18,7 +18,7 @@ typeTranslation.object = 'any';
 
 var blockCommentRegex = new RegExp('/\\*([\\s\\S]*)\\*/', 'gm');
 var lineCommentRegex = new RegExp('//(.*)', 'g');
-var typeRegex = /^([\t ]*)(?:public\s*|partial\s*|abstract\s*)*\s*(class|enum|struct|interface)\s+([\w\d_<>]+)(?:\s*:\s*((?:(?:[\w\d\._<>]+)(?:,\s+)?)+))?\s*\{((?:.|\n|\r)*?)^\1\}/gm;
+var typeRegex = /^([\t ]*)(?:public\s*|partial\s*|abstract\s*)*\s*(class|enum|struct|interface)\s+([\w\d_<>, ]+?)(?:\s*:\s*((?:(?:[\w\d\._<>, ]+?)(?:,\s+)?)+))?\s*\{((?:.|\n|\r)*?)?^\1\}/gm;
 
 function removeComments(code) {
     var output = code.replace(blockCommentRegex, '');
@@ -31,7 +31,7 @@ function removeComments(code) {
 }
 
 function generateInterface(className, input, options) {
-    var propertyRegex = /public( virtual)? ([^?\s]*)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
+    var propertyRegex = /public( virtual)? ([\w\d\._<>, \[\]]+?)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
     var methodRegex = /public( virtual)?( async)? ([^?\s]*) ([\w\d]+)\(((?:.?\s?)*?)\)\s*\{(?:.?\s?)*?\}/gm;
     
     var propertyNameResolver = options && options.propertyNameResolver;
@@ -137,7 +137,8 @@ function generateInterface(className, input, options) {
 
 function getVarType(typeCandidate, scope, typeResolver) {
     var collectionRegex = /^(I?List|IEnumerable|ICollection|HashSet)<([\w\d]+)>$/;
-    var genericPropertyRegex = /^([\w\d]+)<([\w\d\<\>]+)>$/;
+    var dictionaryRegex = /^I?Dictionary<([\w\d]+),\s?([\w\d]+)>$/;
+    var genericPropertyRegex = /^([\w\d]+)<([\w\d\<\> ,]+)>$/;
     var arrayRegex = /^([\w\d]+)\[\]$/;
 
     var varType = typeTranslation[typeCandidate];
@@ -154,8 +155,14 @@ function getVarType(typeCandidate, scope, typeResolver) {
     var collectionMatch = collectionRegex.exec(varType);
     var arrayMatch = arrayRegex.exec(varType);
     var genericPropertyMatch = genericPropertyRegex.exec(varType);
+    var dictionaryMatch = dictionaryRegex.exec(varType);
 
-    if (collectionMatch) {
+    if(dictionaryMatch) {
+        var type1 = dictionaryMatch[1];
+        var type2 = dictionaryMatch[2];
+
+        varType = "{ [index: " + getVarType(type1) + "]: " + getVarType(type2) + " }";
+    } else if (collectionMatch) {
         var collectionType = collectionMatch[1];
         var collectionContentType = collectionMatch[2];
 
@@ -166,9 +173,18 @@ function getVarType(typeCandidate, scope, typeResolver) {
         varType = getVarType(arrayType) + '[]';
     } else if (genericPropertyMatch) {
         var generic = genericPropertyMatch[1];
-        var genericType = genericPropertyMatch[2];
 
-        varType = generic + '<' + getVarType(genericType) + '>';
+        var genericTypes = genericPropertyMatch[2];
+        var splits = genericTypes
+            .split(',')
+            .map(x => x.trim());
+        var finalGenericType = "";
+        for(let split of splits) {
+            if(finalGenericType !== "") finalGenericType += ", ";
+            finalGenericType += getVarType(split);
+        }
+
+        varType = generic + '<' + finalGenericType + '>';
     }
 
     return varType;
