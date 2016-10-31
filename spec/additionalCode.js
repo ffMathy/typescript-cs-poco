@@ -1,0 +1,33 @@
+/// <reference path="../typings/tsd.d.ts" />
+// Disable multiline warning, we're fine with ES5
+// jshint -W043
+
+var sampleFile = "\
+using System;\n\
+\n\
+namespace MyNamespace.Domain\n\
+{\n\
+    public class MyPoco\n\
+    {\n\
+        public int Foo { get; set; }\n\
+    }\n\
+}\n";
+
+var expectedOutput = "interface MyPoco {\n\
+    Foo: number;\n\
+    customStuff: MyPocoBlah;\n\
+    foo(blah: number): OtherStuff;\n\
+}\n";
+
+var pocoGen = require('../index.js');
+
+describe('typescript-cs-poco', function() {
+	it('should transform additional code correctly', function() {
+		var result = pocoGen(sampleFile, { additionalInterfaceCodeResolver: (className) =>
+"customStuff: " + className + "Blah;\n\
+foo(blah: number): OtherStuff;"
+        });
+
+        expect(result).toEqual(expectedOutput);
+	});
+});

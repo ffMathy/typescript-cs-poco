@@ -133,6 +133,18 @@ function generateInterface(className, input, isInterface, options) {
         definition += '): ' + varType + ';\n';
     }
 
+    if(options.additionalInterfaceCodeResolver) {
+
+        var customCode = options
+            .additionalInterfaceCodeResolver(className)
+            .replace('\t', '')
+            .replace('\n', '')
+            .replace(';', ';\n' + leadingWhitespace)
+            .trim();
+
+        definition += leadingWhitespace + customCode + "\n";
+    }
+
     definition += '}\n';
 
     return definition;

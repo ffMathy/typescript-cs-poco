@@ -62,13 +62,25 @@ Defaults to true.  If explicitly set to false, the output file will not be of ty
 
 ##### propertyNameResolver
 
-If supplied, this function will be called every time a property is resolved.  The function takes a single parameter of the name of the property and should return the transformed name as a string.  For example, the function might turn the property name into camelCase, or prepend it with a prefix of some sort to help match an API-side transformation.
+If supplied, this function will be called every time a property is resolved. The function takes a single parameter of the name of the property and should return the transformed name as a string.  For example, the function might turn the property name into camelCase, or prepend it with a prefix of some sort to help match an API-side transformation.
 
 The following example shows how to turn property names into camelCase.
 
 ```typescript
 function camelCasePropertyNameResolver(propName) { 
   return propName[0].toLowerCase() + propName.substring(1); 
+}
+```
+
+##### additionalInterfaceCodeResolver
+
+If supplied, this function will be called for every interface generated. The function takes a single parameter of the name of the class or interface that the current interface is being generated from and should return additional code that will be added to the interface.
+
+The following example shows how to add a `clone` method to all interfaces generated which returns a type of the original class.
+
+```typescript
+function cloneFunctionInterfaceCodeResolver(className) { 
+  return "clone(newId: number): " + className + ";"; 
 }
 ```
 
