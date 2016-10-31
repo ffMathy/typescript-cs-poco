@@ -194,7 +194,7 @@ function getVarType(typeCandidate, scope, typeResolver) {
 }
 
 function generateEnum(enumName, input, options) {
-    var entryRegex = /([^\s,\]\[]+)\s*=?\s*(\d+)?[,|\s]/gm;
+    var entryRegex = /(\w+)\s*=?\s*(\d+)?[,|\s]/gm;
     var definition = 'enum ' + enumName + ' {\n    ';
 
     var entryResult;
