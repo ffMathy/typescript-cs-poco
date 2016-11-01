@@ -76,6 +76,27 @@ function camelCasePropertyNameResolver(propName) {
 
 Specifies the regex timeout, in milliseconds. Defaults to `1000`. Useful if you are performing operations on large items.
 
+##### prefixWithI
+
+Defaults to false. If set to true, all interfaces (but not enums) will be prefixed with I. The conversion will now look like this:
+
+```C#
+public class MyPoco
+{
+	public string Name { get; set; }
+	public int Id { get; set; }
+}
+```
+
+To:
+
+```typescript
+interface IMyPoco {
+	Name: string;
+	Id: number;
+}
+```
+
 ##### additionalInterfaceCodeResolver
 
 If supplied, this function will be called for every interface generated. The function takes a single parameter of the name of the class or interface that the current interface is being generated from and should return additional code that will be added to the interface.
