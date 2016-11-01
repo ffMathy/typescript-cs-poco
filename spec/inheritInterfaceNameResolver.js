@@ -61,7 +61,7 @@ var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function () {
     it('should use the interfaceNameResolver option correctly for base class names', function () {
-        var result = pocoGen(sampleFile, { interfaceNameResolver: camelCaseResolver });
+        var result = pocoGen(sampleFile, { interfaceNameResolver: camelCaseResolver, debug: true });
 
         expect(result).toEqual(expectedOutput);
 

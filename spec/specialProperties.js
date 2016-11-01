@@ -39,15 +39,15 @@ var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should include properties marked as virtual', function() {
-    var result = pocoGen(sampleFile);
-        
-    expect(result).toEqual(expectedOutput);
+        var result = pocoGen(sampleFile);
+            
+        expect(result).toEqual(expectedOutput);
 	});
 
 	it('should not include properties marked as virtual if option is set', function() {
-    var result = pocoGen(sampleFile, { ignoreVirtual: true });
-        
-    expect(result).toEqual(expectedWithoutVirtuals);
+        var r = pocoGen(sampleFile, { ignoreVirtual: true, debug: true });
+            
+        expect(r).toEqual(expectedWithoutVirtuals);
 	});
 });
 
