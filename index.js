@@ -288,6 +288,14 @@ function generateEnum(enumName, input, options) {
 }
 
 module.exports = function(input, options) {
+    if(options && options.prefixWithI) {
+        var existingInterfaceNameResolver = (options && options.interfaceNameResolver) || ((name) => name);
+        options.interfaceNameResolver = (name) => {
+            var decoratedName = existingInterfaceNameResolver(name);
+            return "I" + decoratedName;
+        }
+    }
+
     input = removeComments(input);
     var result = '';
     var match;
