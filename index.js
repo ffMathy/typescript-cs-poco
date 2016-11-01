@@ -16,14 +16,16 @@ typeTranslation.JObject = 'any';
 typeTranslation.dynamic = 'any';
 typeTranslation.object = 'any';
 
-var blockCommentRegex = new RegExp('/\\*([\\s\\S]*)\\*/', 'gm');
-var lineCommentRegex = new RegExp('//(.*)', 'g');
-var typeRegex = /^([\t ]*)(?:public\s*|partial\s*|abstract\s*)*\s*(class|enum|struct|interface)\s+([\w\d_<>, ]+?)(?:\s*:\s*((?:(?:[\w\d\._<>, ]+?)(?:,\s+)?)+))?\s*\{((?:.|\n|\r)*?)?^\1\}/gm;
+var blockCommentRegex = /\/\*([\s\S]*)\*\//gm;
+var lineCommentRegex = /\/\/(.*)/g;
+var typeRegex = /(?:public\s*|partial\s*|abstract\s*)*\s*(class|enum|struct|interface)\s+([\w\d_<>, ]+?)(?:\s*:\s*((?:(?:[\w\d\._<>, ]+?)(?:,\s+)?)+))?\s*\{((?:.|\n|\r)*?)?^\}/gm;
 
 function removeComments(code) {
     var output = code.replace(blockCommentRegex, '');
 
-    var lines = output.split('\n').map(function(line) {
+    var lines = output
+        .split('\n')
+        .map(function(line) {
             return line.replace(lineCommentRegex, '');
         });
 
@@ -247,9 +249,9 @@ module.exports = function(input, options) {
 
     var ignoreInheritance = options && options.ignoreInheritance;
     while (!!(match = typeRegex.exec(input))) {
-        var type = match[2];
-        var typeName = match[3];
-        var inherits = match[4];
+        var type = match[1];
+        var typeName = match[2];
+        var inherits = match[3];
 
         var interfaceNameResolver = options.interfaceNameResolver;
         if (inherits && interfaceNameResolver) {
@@ -269,13 +271,13 @@ module.exports = function(input, options) {
                 typeName = interfaceNameResolver(typeName);
             }
 
-            result += generateInterface(typeName, match[5], type === 'interface', options);
+            result += generateInterface(typeName, match[4], type === 'interface', options);
         } else if (type === 'enum') {
             if (!options.baseNamespace) {
               result += 'declare ';
             }
 
-            result += generateEnum(typeName, match[5], options);
+            result += generateEnum(typeName, match[4], options);
         }
     }
 
