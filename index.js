@@ -1,5 +1,5 @@
-const util = require('util');
-const vm = require('vm');
+var util = require('util');
+var vm = require('vm');
 
 var typeTranslation = {};
 
@@ -243,7 +243,7 @@ function getVarType(typeCandidate, scope, options) {
         var genericTypes = genericPropertyMatch[2];
         var splits = genericTypes
             .split(',')
-            .map(x => x.trim());
+            .map(function(x) { return x.trim(); });
         var finalGenericType = "";
         for(let split of splits) {
             if(finalGenericType !== "") finalGenericType += ", ";
