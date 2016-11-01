@@ -1,3 +1,6 @@
+const util = require('util');
+const vm = require('vm');
+
 var typeTranslation = {};
 
 typeTranslation.int = 'number';
@@ -18,7 +21,37 @@ typeTranslation.object = 'any';
 
 var blockCommentRegex = /\/\*([\s\S]*)\*\//gm;
 var lineCommentRegex = /\/\/(.*)/g;
-var typeRegex = /(?:public\s*|partial\s*|abstract\s*)*\s*(class|enum|struct|interface)\s+([\w\d_<>, ]+?)(?:\s*:\s*((?:(?:[\w\d\._<>, ]+?)(?:,\s+)?)+))?\s*\{((?:.|\n|\r)*?)?^\}/gm;
+var typeRegex = /( *)(?:public\s*|partial\s*|abstract\s*)*\s*(class|enum|struct|interface)\s+([\w\d_<>, ]+?)(?:\s*:\s*((?:(?:[\w\d\._<>, ]+?)(?:,\s+)?)+))?\s*\{((?:.|\n|\r)+?^\1\})/gm;
+
+function safeRegex(regex, input, options) {
+    if(!input) return [];
+
+    var sandbox = {
+        results: [],
+        regex: regex,
+        result: null
+    };
+    
+    var context = vm.createContext(sandbox);
+    var sanitizedInput = input
+        .replace(/\n/g, '\\n')
+        .replace(/'/g, '\\\'');
+
+    var scriptString = 'while(result=regex.exec(\'' + sanitizedInput + '\')){results.push(result);}';
+    var script = new vm.Script(scriptString);
+    
+    try{
+        var timeout = options && options.timeout;
+        if(!timeout) timeout = 5000;
+        script.runInContext(context, { 
+            timeout: timeout.toString()
+        });
+    } catch(e){
+        throw new Error('Regular expression timeout for pattern \'' + regex + '\' and data \'' + input + '\', with ' + sandbox.results.length + ' results gathered so far.\n\nInner error: ' + e);
+    }
+    
+    return sandbox.results;
+}
 
 function removeComments(code) {
     var output = code.replace(blockCommentRegex, '');
@@ -32,18 +65,29 @@ function removeComments(code) {
     return lines.join('\n');
 }
 
-function generateInterface(className, input, isInterface, options) {
-    var propertyRegex = /\s*(?:(public) )?(?:(virtual) )?([\w\d\._<>, \[\]]+?)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
-    var methodRegex = /public( virtual)?( async)? ([^?\s]*) ([\w\d]+)\(((?:.?\s?)*?)\)\s*\{(?:.?\s?)*?\}/gm;
+function generateInterface(className, inherits, input, isInterface, options) {
+    var propertyRegex = /(?:(?:((?:public)?)|(?:private)|(?:protected)|(?:internal)|(?:protected internal)) )+(?:(virtual) )?([\w\d\._<>, \[\]]+?)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
+    var methodRegex = /(?:(?:((?:public)?)|(?:private)|(?:protected)|(?:internal)|(?:protected internal)) )+(?:(virtual) )?(?:(async) )?(?:([\w\d\._<>, \[\]]+?) )?([\w\d]+)\(((?:.?\s?)*?)\)\s*\{(?:.?\s?)*?\}/gm;
     
     var propertyNameResolver = options && options.propertyNameResolver;
     var methodNameResolver = options && options.methodNameResolver;
     var interfaceNameResolver = options && options.interfaceNameResolver;
-    var typeResolver = options && options.typeResolver;
-    
+
+    var originalClassName = className;
+
+    if (inherits && interfaceNameResolver) {
+        inherits = interfaceNameResolver(inherits);
+    }
+
+    var ignoreInheritance = options && options.ignoreInheritance;
+    if (inherits && (!ignoreInheritance || ignoreInheritance.indexOf(inherits) === -1)) {
+        className += ' extends ' + inherits;
+    }
+
     if (interfaceNameResolver) {
         className = interfaceNameResolver(className);
     }
+
     var definition = 'interface ' + className + ' {\n';
 
     if (options && options.dateTimeToDate) {
@@ -63,13 +107,9 @@ function generateInterface(className, input, isInterface, options) {
     var leadingWhitespace = '    ';
 
     var propertyResult;
-    while (!!(propertyResult = propertyRegex.exec(input))) {
+    for (var propertyResult of safeRegex(propertyRegex, input, options)) {
         var visibility = propertyResult[1];
         if(!isInterface && visibility !== 'public') continue;
-
-        var varType = getVarType(propertyResult[3], "property-type", typeResolver);
-
-        var isOptional = propertyResult[4] === '?';
 
         if (options && options.ignoreVirtual) {
             var isVirtual = propertyResult[2] === 'virtual';
@@ -77,6 +117,10 @@ function generateInterface(className, input, isInterface, options) {
                 continue;
             }
         }
+
+        var varType = getVarType(propertyResult[3], "property-type", options);
+
+        var isOptional = propertyResult[4] === '?';
 
         var propertyName = propertyResult[5];
         if (propertyNameResolver) {
@@ -92,10 +136,13 @@ function generateInterface(className, input, isInterface, options) {
     }
 
     var methodResult;
-    while (!!(methodResult = methodRegex.exec(input))) {
-        var varType = getVarType(methodResult[3], "method-return-type", typeResolver);
+    for (var methodResult of safeRegex(methodRegex, input, options)) {
+        var visibility = methodResult[1];
+        if(!isInterface && visibility !== 'public') continue;
 
-        var isAsync = methodResult[2] === ' async';
+        var varType = getVarType(methodResult[4], "method-return-type", options);
+
+        var isAsync = methodResult[3] === 'async';
         if(isAsync) {
             if(varType.indexOf('<') > -1 && varType.indexOf('>') > -1) {
                 varType = varType.replace(/^Task\<([^?\s]*)\>$/gm, '$1');
@@ -106,28 +153,30 @@ function generateInterface(className, input, isInterface, options) {
         }
         
         if (options && options.ignoreVirtual) {
-            var isVirtual = methodResult[1] === 'virtual';
+            var isVirtual = methodResult[2] === 'virtual';
             if (isVirtual) {
                 continue;
             }
         }
 
-        var methodName = methodResult[4];
+        var methodName = methodResult[5];
+        if(methodName.toLowerCase() === originalClassName.toLowerCase()) continue;
+
         if (methodNameResolver) {
             methodName = methodNameResolver(methodName);
         }
         definition += leadingWhitespace + methodName + '(';
 
-        var arguments = methodResult[5];
+        var arguments = methodResult[6];
         var argumentsRegex = /\s*(?:\[[\w\d]+\])?([^?\s]*) ([\w\d]+)(?:\,\s*)?/gm;
 
         var argumentResult;
         var argumentDefinition = '';
-        while (!!(argumentResult = argumentsRegex.exec(arguments))) {
+        for(var argumentResult of safeRegex(argumentsRegex, arguments, options)) {
             if (argumentDefinition !== '') {
                 argumentDefinition += ', ';
             }
-            argumentDefinition += argumentResult[2] + ': ' + getVarType(argumentResult[1], "method-argument-type", typeResolver);
+            argumentDefinition += argumentResult[2] + ': ' + getVarType(argumentResult[1], "method-argument-type", options);
         }
 
         definition += argumentDefinition;
@@ -135,7 +184,7 @@ function generateInterface(className, input, isInterface, options) {
         definition += '): ' + varType + ';\n';
     }
 
-    if(options.additionalInterfaceCodeResolver) {
+    if(options && options.additionalInterfaceCodeResolver) {
 
         var customCode = options
             .additionalInterfaceCodeResolver(className)
@@ -152,15 +201,15 @@ function generateInterface(className, input, isInterface, options) {
     return definition;
 }
 
-function getVarType(typeCandidate, scope, typeResolver) {
-    var collectionRegex = /^(I?List|IEnumerable|ICollection|HashSet)<([\w\d]+)>$/;
-    var dictionaryRegex = /^I?Dictionary<([\w\d]+),\s?([\w\d]+)>$/;
-    var genericPropertyRegex = /^([\w\d]+)<([\w\d\<\> ,]+)>$/;
-    var arrayRegex = /^([\w\d]+)\[\]$/;
+function getVarType(typeCandidate, scope, options) {
+    var collectionRegex = /^(I?List|IEnumerable|ICollection|HashSet)<([\w\d]+)>$/gm;
+    var dictionaryRegex = /^I?Dictionary<([\w\d]+),\s?([\w\d]+)>$/gm;
+    var genericPropertyRegex = /^([\w\d]+)<([\w\d\<\> ,]+)>$/gm;
+    var arrayRegex = /^([\w\d]+)\[\]$/gm;
 
     var varType = typeTranslation[typeCandidate];
-    if(typeResolver) {
-        varType = typeResolver(varType, scope);
+    if(scope && (options && options.typeResolver)) {
+        varType = options.typeResolver(varType, scope);
     }
     
     if (varType) {
@@ -169,21 +218,21 @@ function getVarType(typeCandidate, scope, typeResolver) {
     
     varType = typeCandidate;
 
-    var collectionMatch = collectionRegex.exec(varType);
-    var arrayMatch = arrayRegex.exec(varType);
-    var genericPropertyMatch = genericPropertyRegex.exec(varType);
-    var dictionaryMatch = dictionaryRegex.exec(varType);
+    var collectionMatch = safeRegex(collectionRegex, varType, options)[0];
+    var arrayMatch = safeRegex(arrayRegex, varType, options)[0];
+    var genericPropertyMatch = safeRegex(genericPropertyRegex, varType, options)[0];
+    var dictionaryMatch = safeRegex(dictionaryRegex, varType, options)[0];
 
     if(dictionaryMatch) {
         var type1 = dictionaryMatch[1];
         var type2 = dictionaryMatch[2];
 
-        varType = "{ [index: " + getVarType(type1) + "]: " + getVarType(type2) + " }";
+        varType = "{ [index: " + getVarType(type1, null, options) + "]: " + getVarType(type2, null, options) + " }";
     } else if (collectionMatch) {
         var collectionType = collectionMatch[1];
         var collectionContentType = collectionMatch[2];
 
-        varType = getVarType(collectionContentType) + '[]';
+        varType = getVarType(collectionContentType, null, options) + '[]';
     } else if (arrayMatch) {
         var arrayType = arrayMatch[1];
 
@@ -198,7 +247,7 @@ function getVarType(typeCandidate, scope, typeResolver) {
         var finalGenericType = "";
         for(let split of splits) {
             if(finalGenericType !== "") finalGenericType += ", ";
-            finalGenericType += getVarType(split);
+            finalGenericType += getVarType(split, null, options);
         }
 
         varType = generic + '<' + finalGenericType + '>';
@@ -216,7 +265,7 @@ function generateEnum(enumName, input, options) {
     var elements = [];
     var lastIndex = 0;
 
-    while(!!(entryResult = entryRegex.exec(input))) {
+    for(var entryResult of safeRegex(entryRegex, input)) {
         var entryName = entryResult[1];
         var entryValue = entryResult[2];
 
@@ -247,37 +296,23 @@ module.exports = function(input, options) {
         options = {};
     }
 
-    var ignoreInheritance = options && options.ignoreInheritance;
-    while (!!(match = typeRegex.exec(input))) {
-        var type = match[1];
-        var typeName = match[2];
-        var inherits = match[3];
-
-        var interfaceNameResolver = options.interfaceNameResolver;
-        if (inherits && interfaceNameResolver) {
-            inherits = interfaceNameResolver(inherits);
-        }
+    for (var match of safeRegex(typeRegex, input, options)) {
+        var type = match[2];
+        var typeName = match[3];
+        var inherits = match[4];
 
         if (result.length > 0) {
             result += '\n';
         }
 
         if (type === 'class' || type === 'struct' || (type === 'interface' && options.includeInterfaces)) {
-            if (inherits && (!ignoreInheritance || ignoreInheritance.indexOf(inherits) === -1)) {
-                typeName += ' extends ' + inherits;
-            }
-
-            if (interfaceNameResolver) {
-                typeName = interfaceNameResolver(typeName);
-            }
-
-            result += generateInterface(typeName, match[4], type === 'interface', options);
+            result += generateInterface(typeName, inherits, match[5], type === 'interface', options);
         } else if (type === 'enum') {
             if (!options.baseNamespace) {
               result += 'declare ';
             }
 
-            result += generateEnum(typeName, match[4], options);
+            result += generateEnum(typeName, match[5], options);
         }
     }
 
