@@ -34,8 +34,8 @@ function safeRegex(regex, input, options) {
     
     var context = vm.createContext(sandbox);
     var sanitizedInput = input
-        .replace(/\n/g, '\\n')
-        .replace(/'/g, '\\\'');
+        .replace(/[\n\r]+/gm, '\\n')
+        .replace(/\'/g, '\\\'');
 
     var scriptString = 'while(result=regex.exec(\'' + sanitizedInput + '\')){results.push(result);}';
     var script = new vm.Script(scriptString);
