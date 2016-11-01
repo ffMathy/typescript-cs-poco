@@ -83,8 +83,8 @@ Defaults to false. If set to true, all interfaces (but not enums) will be prefix
 ```C#
 public class MyPoco
 {
-	public string Name { get; set; }
-	public int Id { get; set; }
+  public string Name { get; set; }
+  public int Id { get; set; }
 }
 ```
 
@@ -92,8 +92,8 @@ To:
 
 ```typescript
 interface IMyPoco {
-	Name: string;
-	Id: number;
+  Name: string;
+  Id: number;
 }
 ```
 
