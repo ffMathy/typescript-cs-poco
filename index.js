@@ -42,7 +42,7 @@ function safeRegex(regex, input, options) {
     
     try{
         var timeout = options && options.timeout;
-        if(!timeout) timeout = 5000;
+        if(!timeout) timeout = 30000;
         script.runInContext(context, { 
             timeout: timeout.toString()
         });
