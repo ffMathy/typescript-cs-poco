@@ -37,7 +37,7 @@ Note that using this option with gulp concat() will create many individual modul
 
 ##### dateTimeToDate
 
-Defaults to false.  Due to serialization/deserialization complications, the default implementation is to transform DateTime fields to strings, as that's what they naturally turn into in most .NET APIs.  If you want to treat the type as a Date, *first make sure your API is handling the serialization properly*!  Then provide the dateTimeToDate option set to true to turn this:
+Defaults to `false`.  Due to serialization/deserialization complications, the default implementation is to transform DateTime fields to strings, as that's what they naturally turn into in most .NET APIs.  If you want to treat the type as a Date, *first make sure your API is handling the serialization properly*!  Then provide the dateTimeToDate option set to `true` to turn this:
 
 ```C#
 public class MyPoco
@@ -58,7 +58,7 @@ interface IMyPoco {
 
 ##### definitionFile
 
-Defaults to true.  If explicitly set to false, the output file will not be of type d.ts and any baseNamespace being used will not have declare before the module name.
+Defaults to `true`.  If explicitly set to `false`, the output file will not be of type d.ts and any baseNamespace being used will not have declare before the module name.
 
 ##### propertyNameResolver
 
@@ -74,11 +74,11 @@ function camelCasePropertyNameResolver(propName) {
 
 ##### timeout
 
-Specifies the regex timeout, in milliseconds. Defaults to `1000`. Useful if you are performing operations on large items.
+Specifies the regex timeout, in milliseconds. Defaults to `30000`. Useful if you are performing operations on large items.
 
 ##### prefixWithI
 
-Defaults to false. If set to true, all interfaces (but not enums) will be prefixed with I. The conversion will now look like this:
+Defaults to `false`. If set to `true`, all interfaces (but not enums) will be prefixed with I. The conversion will now look like this:
 
 ```C#
 public class MyPoco
@@ -132,11 +132,11 @@ function camelCasePropertyTypeResolver(typeName, scope) {
 
 ##### ignoreVirtual
 
-If set to true, virtual properties will be ignored.  This is useful for things like EF-created POCOs that may have virtual reference fields that shouldn't be included.
+If set to `true`, virtual properties will be ignored.  This is useful for things like EF-created POCOs that may have virtual reference fields that shouldn't be included.
 
 ##### includeInterfaces
 
-If set to true, any interfaces found in the given files will also be included as Typescript interfaces.  By default interfaces are ignored.
+If set to `true`, any interfaces found in the given files will also be included as Typescript interfaces.  By default interfaces are ignored.
 
 ##### customTypeTranslations
 
