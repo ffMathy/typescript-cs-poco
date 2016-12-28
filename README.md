@@ -134,6 +134,10 @@ function camelCasePropertyTypeResolver(typeName, scope) {
 
 If set to true, virtual properties will be ignored.  This is useful for things like EF-created POCOs that may have virtual reference fields that shouldn't be included.
 
+##### ignoreReadOnly
+
+If set to true, the `readonly` keyword on properties will be ignored.
+
 ##### includeInterfaces
 
 If set to true, any interfaces found in the given files will also be included as Typescript interfaces.  By default interfaces are ignored.

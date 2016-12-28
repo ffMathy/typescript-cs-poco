@@ -20,6 +20,11 @@ var expectedOutput = "interface MyPoco {\n\
     readonly InterestingWhitespace: string;\n\
 }\n";
 
+var expectedOutputWithoutReadOnly = "interface MyPoco {\n\
+    Field: string;\n\
+    InterestingWhitespace: string;\n\
+}\n";
+
 var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function() {
@@ -27,5 +32,11 @@ describe('typescript-cs-poco', function() {
         var result = pocoGen(sampleFile);
 
         expect(result).toEqual(expectedOutput);
+	});
+
+	it('should not include readonly keywords if option is set', function() {
+        var result = pocoGen(sampleFile, { ignoreReadOnly: true });
+
+        expect(result).toEqual(expectedOutputWithoutReadOnly);
 	});
 });
