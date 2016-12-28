@@ -138,6 +138,10 @@ If set to `true`, virtual properties will be ignored.  This is useful for things
 
 If set to `true`, any interfaces found in the given files will also be included as Typescript interfaces.  By default interfaces are ignored.
 
+##### ignoreInheritance
+
+If set to an array of class names, inheritance from these classes will be ignored.
+
 ##### customTypeTranslations
 
 If set to an object, map every key in the object to the key's value.  For example:
