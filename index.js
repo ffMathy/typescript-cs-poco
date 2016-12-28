@@ -66,8 +66,8 @@ function removeComments(code) {
 }
 
 function generateInterface(className, inherits, input, isInterface, options) {
-    var propertyRegex = /(?:(?:((?:public)?)|(?:private)|(?:protected)|(?:internal)|(?:protected internal)) )+(?:(virtual) )?([\w\d\._<>, \[\]]+?)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
-    var methodRegex = /(?:(?:((?:public)?)|(?:private)|(?:protected)|(?:internal)|(?:protected internal)) )+(?:(virtual) )?(?:(async) )?(?:([\w\d\._<>, \[\]]+?) )?([\w\d]+)\(((?:.?\s?)*?)\)\s*\{(?:.?\s?)*?\}/gm;
+    var propertyRegex = /(?:(?:((?:public)?)|(?:private)|(?:protected)|(?:internal)|(?:protected internal)) )+(?:(virtual|readonly) )?([\w\d\._<>, \[\]]+?)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
+    var methodRegex = /(?:(?:((?:public)?)|(?:private)|(?:protected)|(?:internal)|(?:protected internal)) )+(?:(virtual|readonly) )?(?:(async) )?(?:([\w\d\._<>, \[\]]+?) )?([\w\d]+)\(((?:.?\s?)*?)\)\s*\{(?:.?\s?)*?\}/gm;
     
     var propertyNameResolver = options && options.propertyNameResolver;
     var methodNameResolver = options && options.methodNameResolver;
@@ -120,13 +120,20 @@ function generateInterface(className, inherits, input, isInterface, options) {
 
         var varType = getVarType(propertyResult[3], "property-type", options);
 
+        var isReadOnly = propertyResult[2] === 'readonly';
         var isOptional = propertyResult[4] === '?';
 
         var propertyName = propertyResult[5];
         if (propertyNameResolver) {
             propertyName = propertyNameResolver(propertyName);
         }
-        definition += leadingWhitespace + propertyName;
+        definition += leadingWhitespace;
+
+        if (isReadOnly) {
+            definition += 'readonly ';
+        }
+
+        definition += propertyName;
 
         if (isOptional) {
             definition += '?';
