@@ -35,7 +35,7 @@ describe('typescript-cs-poco', function() {
 	});
 
 	it('should not include readonly keywords if option is set', function() {
-        var result = pocoGen(sampleFile, { ignoreReadOnly: true });
+        var result = pocoGen(sampleFile, { stripReadOnly: true });
 
         expect(result).toEqual(expectedOutputWithoutReadOnly);
 	});
