@@ -129,7 +129,7 @@ function generateInterface(className, inherits, input, isInterface, options) {
         }
         definition += leadingWhitespace;
 
-        if (options && !options.ignoreReadOnly && isReadOnly) {
+        if (options && !options.stripReadOnly && isReadOnly) {
             definition += 'readonly ';
         }
 

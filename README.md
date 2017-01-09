@@ -138,7 +138,7 @@ If set to `true`, virtual properties will be ignored.  This is useful for things
 
 If set to `true`, methods will be ignored.
 
-##### ignoreReadOnly
+##### stripReadOnly
 
 If set to `true`, the `readonly` keyword on properties will be removed, but the properties themselves will still be added.
 
