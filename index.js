@@ -142,53 +142,55 @@ function generateInterface(className, inherits, input, isInterface, options) {
         definition += ': ' + varType + ';\n';
     }
 
-    var methodResult;
-    for (var methodResult of safeRegex(methodRegex, input, options)) {
-        var visibility = methodResult[1];
-        if(!isInterface && visibility !== 'public') continue;
+    if (options && !options.ignoreMethods) {
+        var methodResult;
+        for (var methodResult of safeRegex(methodRegex, input, options)) {
+            var visibility = methodResult[1];
+            if(!isInterface && visibility !== 'public') continue;
 
-        var varType = getVarType(methodResult[4], "method-return-type", options);
+            var varType = getVarType(methodResult[4], "method-return-type", options);
 
-        var isAsync = methodResult[3] === 'async';
-        if(isAsync) {
-            if(varType.indexOf('<') > -1 && varType.indexOf('>') > -1) {
-                varType = varType.replace(/^Task\<([^?\s]*)\>$/gm, '$1');
-                varType = 'Promise<' + varType + '>';
-            } else {
-                varType = varType.replace('Task', 'Promise<void>');
+            var isAsync = methodResult[3] === 'async';
+            if(isAsync) {
+                if(varType.indexOf('<') > -1 && varType.indexOf('>') > -1) {
+                    varType = varType.replace(/^Task\<([^?\s]*)\>$/gm, '$1');
+                    varType = 'Promise<' + varType + '>';
+                } else {
+                    varType = varType.replace('Task', 'Promise<void>');
+                }
             }
-        }
-        
-        if (options && options.ignoreVirtual) {
-            var isVirtual = methodResult[2] === 'virtual';
-            if (isVirtual) {
-                continue;
+            
+            if (options && options.ignoreVirtual) {
+                var isVirtual = methodResult[2] === 'virtual';
+                if (isVirtual) {
+                    continue;
+                }
             }
-        }
 
-        var methodName = methodResult[5];
-        if(methodName.toLowerCase() === originalClassName.toLowerCase()) continue;
+            var methodName = methodResult[5];
+            if(methodName.toLowerCase() === originalClassName.toLowerCase()) continue;
 
-        if (methodNameResolver) {
-            methodName = methodNameResolver(methodName);
-        }
-        definition += leadingWhitespace + methodName + '(';
-
-        var arguments = methodResult[6];
-        var argumentsRegex = /\s*(?:\[[\w\d]+\])?([^?\s]*) ([\w\d]+)(?:\,\s*)?/gm;
-
-        var argumentResult;
-        var argumentDefinition = '';
-        for(var argumentResult of safeRegex(argumentsRegex, arguments, options)) {
-            if (argumentDefinition !== '') {
-                argumentDefinition += ', ';
+            if (methodNameResolver) {
+                methodName = methodNameResolver(methodName);
             }
-            argumentDefinition += argumentResult[2] + ': ' + getVarType(argumentResult[1], "method-argument-type", options);
+            definition += leadingWhitespace + methodName + '(';
+
+            var arguments = methodResult[6];
+            var argumentsRegex = /\s*(?:\[[\w\d]+\])?([^?\s]*) ([\w\d]+)(?:\,\s*)?/gm;
+
+            var argumentResult;
+            var argumentDefinition = '';
+            for(var argumentResult of safeRegex(argumentsRegex, arguments, options)) {
+                if (argumentDefinition !== '') {
+                    argumentDefinition += ', ';
+                }
+                argumentDefinition += argumentResult[2] + ': ' + getVarType(argumentResult[1], "method-argument-type", options);
+            }
+
+            definition += argumentDefinition;
+
+            definition += '): ' + varType + ';\n';
         }
-
-        definition += argumentDefinition;
-
-        definition += '): ' + varType + ';\n';
     }
 
     if(options && options.additionalInterfaceCodeResolver) {
