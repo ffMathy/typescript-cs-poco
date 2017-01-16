@@ -194,13 +194,8 @@ function generateInterface(className, inherits, input, isInterface, options) {
     }
 
     if(options && options.additionalInterfaceCodeResolver) {
-
-        var customCode = options
-            .additionalInterfaceCodeResolver(leadingWhitespace, originalClassName)
-            .replace(';', ';\n' + leadingWhitespace)
-            .trim();
-
-        definition += leadingWhitespace + customCode + "\n";
+        var customCode = options.additionalInterfaceCodeResolver(leadingWhitespace, originalClassName);
+        definition += "\n" + leadingWhitespace + customCode + "\n";
     }
 
     definition += '}\n';
