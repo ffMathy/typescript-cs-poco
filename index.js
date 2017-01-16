@@ -106,7 +106,7 @@ function generateInterface(className, inherits, input, isInterface, options) {
 
     var leadingWhitespace = '    ';
 
-    var propertyNames = [];
+    var properties = [];
     var propertyResult;
     for (var propertyResult of safeRegex(propertyRegex, input, options)) {
         var visibility = propertyResult[1];
@@ -142,10 +142,10 @@ function generateInterface(className, inherits, input, isInterface, options) {
 
         definition += ': ' + varType + ';\n';
 
-        propertyNames.push(propertyName);
+        properties.push({ name: propertyName, type: varType });
     }
 
-    var methodNames = [];
+    var methods = [];
     if (options && !options.ignoreMethods) {
         var methodResult;
         for (var methodResult of safeRegex(methodRegex, input, options)) {
@@ -195,12 +195,12 @@ function generateInterface(className, inherits, input, isInterface, options) {
 
             definition += '): ' + varType + ';\n';
 
-            methodNames.push(methodName);
+            methods.push({ name: methodName, returnType: varType });
         }
     }
 
     if(options && options.additionalInterfaceCodeResolver) {
-        var customCode = options.additionalInterfaceCodeResolver(leadingWhitespace, originalClassName, propertyNames, methodNames);
+        var customCode = options.additionalInterfaceCodeResolver(leadingWhitespace, originalClassName, properties, methods);
         definition += "\n" + leadingWhitespace + customCode + "\n";
     }
 
