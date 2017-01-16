@@ -106,6 +106,7 @@ function generateInterface(className, inherits, input, isInterface, options) {
 
     var leadingWhitespace = '    ';
 
+    var propertyNames = [];
     var propertyResult;
     for (var propertyResult of safeRegex(propertyRegex, input, options)) {
         var visibility = propertyResult[1];
@@ -140,8 +141,11 @@ function generateInterface(className, inherits, input, isInterface, options) {
         }
 
         definition += ': ' + varType + ';\n';
+
+        propertyNames.push(propertyName);
     }
 
+    var methodNames = [];
     if (options && !options.ignoreMethods) {
         var methodResult;
         for (var methodResult of safeRegex(methodRegex, input, options)) {
@@ -190,11 +194,13 @@ function generateInterface(className, inherits, input, isInterface, options) {
             definition += argumentDefinition;
 
             definition += '): ' + varType + ';\n';
+
+            methodNames.push(methodName);
         }
     }
 
     if(options && options.additionalInterfaceCodeResolver) {
-        var customCode = options.additionalInterfaceCodeResolver(leadingWhitespace, originalClassName);
+        var customCode = options.additionalInterfaceCodeResolver(leadingWhitespace, originalClassName, propertyNames, methodNames);
         definition += "\n" + leadingWhitespace + customCode + "\n";
     }
 

@@ -104,7 +104,7 @@ If supplied, this function will be called for every interface generated. The fun
 The following example shows how to add a `clone` method to all interfaces generated which returns a type of the original class.
 
 ```typescript
-function cloneFunctionInterfaceCodeResolver(leadingWhitespace, className) { 
+function cloneFunctionInterfaceCodeResolver(leadingWhitespace, className, propertyNames, methodNames) { 
   return leadingWhitespace + "clone(newId: number): " + className + ";"; 
 }
 ```
