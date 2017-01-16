@@ -79,13 +79,13 @@ function generateInterface(className, inherits, input, isInterface, options) {
         inherits = interfaceNameResolver(inherits);
     }
 
+    if (interfaceNameResolver) {
+        className = interfaceNameResolver(className);
+    }
+
     var ignoreInheritance = options && options.ignoreInheritance;
     if (inherits && (!ignoreInheritance || ignoreInheritance.indexOf(inherits) === -1)) {
         className += ' extends ' + inherits;
-    }
-
-    if (interfaceNameResolver) {
-        className = interfaceNameResolver(className);
     }
 
     var definition = 'interface ' + className + ' {\n';
