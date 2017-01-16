@@ -196,7 +196,7 @@ function generateInterface(className, inherits, input, isInterface, options) {
     if(options && options.additionalInterfaceCodeResolver) {
 
         var customCode = options
-            .additionalInterfaceCodeResolver(className)
+            .additionalInterfaceCodeResolver(originalClassName)
             .replace('\t', '')
             .replace('\n', '')
             .replace(';', ';\n' + leadingWhitespace)
