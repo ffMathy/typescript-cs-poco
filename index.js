@@ -84,7 +84,7 @@ function generateInterface(className, inherits, input, isInterface, options) {
     }
 
     var ignoreInheritance = options && options.ignoreInheritance;
-    if (inherits && (!ignoreInheritance || ignoreInheritance.indexOf(inherits) === -1)) {
+    if (inherits && ignoreInheritance !== true && (!ignoreInheritance || ignoreInheritance.indexOf(inherits) === -1)) {
         className += ' extends ' + inherits;
     }
 

@@ -148,7 +148,7 @@ If set to `true`, any interfaces found in the given files will also be included 
 
 ##### ignoreInheritance
 
-If set to an array of class names, inheritance from these classes will be ignored.
+If set to an array of class names, inheritance from these classes will be ignored. If set to `true` will ignore inheritance in general.
 
 ##### customTypeTranslations
 
