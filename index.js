@@ -216,11 +216,11 @@ function getVarType(typeCandidate, scope, options) {
     var arrayRegex = /^([\w\d]+)\[\]$/gm;
 
     var varType = typeTranslation[typeCandidate];
-    if(scope && (options && options.typeResolver)) {
-        varType = options.typeResolver(varType, scope);
-    }
     
     if (varType) {
+        if(scope && (options && options.typeResolver)) {
+            varType = options.typeResolver(varType, scope);
+        }
         return varType;
     }
     
@@ -261,6 +261,9 @@ function getVarType(typeCandidate, scope, options) {
         varType = generic + '<' + finalGenericType + '>';
     }
 
+    if(scope && (options && options.typeResolver)) {
+        varType = options.typeResolver(varType, scope);
+    }
     return varType;
 }
 
