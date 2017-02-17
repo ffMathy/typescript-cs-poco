@@ -14,7 +14,7 @@ namespace MyNamespace.Domain\n\
 }\n";
 
 var expectedOutput = "interface MyPoco {\n\
-    Foo: number;\n\
+    Foo: number;\n\n\
     customStuff: MyPocoBlah;\n\
     foo(blah: number): OtherStuff;\n\
 }\n";
@@ -23,10 +23,13 @@ var pocoGen = require('../index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should transform additional code correctly', function() {
-		var result = pocoGen(sampleFile, { additionalInterfaceCodeResolver: (className) =>
-"customStuff: " + className + "Blah;\n\
-foo(blah: number): OtherStuff;"
-        });
+		var result = pocoGen(
+            sampleFile,
+            {
+                additionalInterfaceCodeResolver: (leadingWhitespace, className) => "customStuff: " + className + "Blah;\n\
+    foo(blah: number): OtherStuff;"
+            }
+        );
 
         expect(result).toEqual(expectedOutput);
 	});

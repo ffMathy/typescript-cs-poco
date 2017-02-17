@@ -67,7 +67,7 @@ function removeComments(code) {
 
 function generateInterface(className, inherits, input, isInterface, options) {
     var propertyRegex = /(?:(?:((?:public)?)|(?:private)|(?:protected)|(?:internal)|(?:protected internal)) )+(?:(virtual|readonly) )?([\w\d\._<>, \[\]]+?)(\??) ([\w\d]+)\s*(?:{\s*get;\s*(?:private\s*)?set;\s*}|;)/gm;
-    var methodRegex = /(?:(?:((?:public)?)|(?:private)|(?:protected)|(?:internal)|(?:protected internal)) )+(?:(virtual|readonly) )?(?:(async) )?(?:([\w\d\._<>, \[\]]+?) )?([\w\d]+)\(((?:.?\s?)*?)\)\s*\{(?:.?\s?)*?\}/gm;
+    var methodRegex = /(?:(?:((?:public)?)|(?:private)|(?:protected)|(?:internal)|(?:protected internal)) )+(?:(virtual|readonly) )?(?:(async) )?(?:([\w\d\._<>, \[\]]+?) )?([\w\d]+)\(((?:.?\s?)*?)\)\s*/gm;
     
     var propertyNameResolver = options && options.propertyNameResolver;
     var methodNameResolver = options && options.methodNameResolver;
@@ -192,6 +192,7 @@ function generateInterface(className, inherits, input, isInterface, options) {
             }
 
             definition += argumentDefinition;
+
 
             definition += '): ' + varType + ';\n';
 

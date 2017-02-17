@@ -9,12 +9,15 @@ namespace MyNamespace.Domain\n\
 {\n\
     public interface MyInterface\n\
     {\n\
+        string Foo(string bar);\n\
+        \
         string Name { get; set; }\n\
     }\n\
 }\n";
 
 var expectedOutput = "interface MyInterface {\n\
     Name: string;\n\
+    Foo(bar: string): string;\n\
 }\n";
 
 var pocoGen = require('../index.js');
