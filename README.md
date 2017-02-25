@@ -8,6 +8,10 @@ Generates a Typescript type definition file for a C# POCO class.  Takes in a str
 - Gulp: https://github.com/ffMathy/gulp-typescript-cs-poco
 - Grunt: https://github.com/ffMathy/grunt-typescript-cs-poco
 
+## Installation with npm
+
+`npm install --save typescript-cs-poco`
+
 ## Options
 
 The following options can be supplied into the `pocoGen` function, and are therefore also available in the above wrappers.
