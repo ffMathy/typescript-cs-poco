@@ -270,7 +270,12 @@ function getVarType(typeCandidate, scope, options) {
 
 function generateEnum(enumName, input, options) {
     var entryRegex = /(\w+)\s*=?\s*(-*\d+)?[,|\s]/gm;
-    var definition = 'enum ' + enumName + ' {\n    ';
+
+    if (options.useStringUnionTypes) {
+        var definition = 'type ' + enumName + ' =\n    ';
+    } else {
+        var definition = 'enum ' + enumName + ' {\n    ';
+    }
 
     var entryResult;
 
@@ -289,12 +294,20 @@ function generateEnum(enumName, input, options) {
             lastIndex = parseInt(entryValue, 10) + 1;
         }
 
-        elements.push(entryName + ' = ' + entryValue);
+        if (options.useStringUnionTypes) {
+            elements.push("'" + entryName + "'");
+        } else {
+            elements.push(entryName + ' = ' + entryValue);
+        }
     }
 
-    definition += elements.join(',\n    ');
-
-    definition += '\n}\n';
+    if (options.useStringUnionTypes) {
+        definition += elements.join(' |\n    ');
+        definition += '\n';
+    } else {
+        definition += elements.join(',\n    ');
+        definition += '\n}\n';
+    }
 
     return definition;
 }
@@ -348,7 +361,7 @@ module.exports = function(input, options) {
         var lines = [firstLine];
 
         lines = lines.concat(result.split('\n').map(function(line) {
-            return '    ' + (/^(?:interface|enum)/.test(line) ? 'export ' + line : line);
+            return '    ' + (/^(?:interface|enum|type)/.test(line) ? 'export ' + line : line);
         }));
         lines = lines.slice(0, lines.length - 1);
         lines = lines.concat('}');

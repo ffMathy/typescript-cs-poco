@@ -154,6 +154,10 @@ If set to `true`, any interfaces found in the given files will also be included 
 
 If set to an array of class names, inheritance from these classes will be ignored. If set to `true` will ignore inheritance in general.
 
+##### useStringUnionTypes
+
+If set to `true`, any enums will be converted to string union types.
+
 ##### customTypeTranslations
 
 If set to an object, map every key in the object to the key's value.  For example:
