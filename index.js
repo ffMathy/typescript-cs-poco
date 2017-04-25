@@ -282,7 +282,7 @@ function generateEnum(enumName, input, options) {
     var elements = [];
     var lastIndex = 0;
 
-    for(var entryResult of safeRegex(entryRegex, input)) {
+    for(var entryResult of safeRegex(entryRegex, stripDecorators(input))) {
         var entryName = entryResult[1];
         var entryValue = entryResult[2];
 
@@ -310,6 +310,12 @@ function generateEnum(enumName, input, options) {
     }
 
     return definition;
+}
+
+function stripDecorators(input) {
+    var decoratorsRegex = /\[\w+\("[A-Öa-ö\s]*"\)\]/gm;
+
+    return input.replace(decoratorsRegex, '');
 }
 
 module.exports = function(input, options) {
