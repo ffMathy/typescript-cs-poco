@@ -83,6 +83,12 @@ function generateInterface(className, inherits, input, isInterface, options) {
         className = interfaceNameResolver(className);
     }
 
+    if (options && options.prefixWithI) {
+        if (inherits)
+            inherits = "I" + inherits;
+        className = "I" + className;
+    }
+
     var ignoreInheritance = options && options.ignoreInheritance;
     if (inherits && ignoreInheritance !== true && (!ignoreInheritance || ignoreInheritance.indexOf(inherits) === -1)) {
         className += ' extends ' + inherits;
@@ -319,14 +325,6 @@ function stripDecorators(input) {
 }
 
 module.exports = function(input, options) {
-    if(options && options.prefixWithI) {
-        var existingInterfaceNameResolver = (options && options.interfaceNameResolver) || ((name) => name);
-        options.interfaceNameResolver = (name) => {
-            var decoratedName = existingInterfaceNameResolver(name);
-            return "I" + decoratedName;
-        }
-    }
-
     input = removeComments(input);
     var result = '';
     var match;
