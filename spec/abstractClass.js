@@ -3,27 +3,27 @@
 
 //TODO: for issue https://github.com/ffMathy/typescript-cs-poco/issues/61
 
-//var sampleFile = "\
-//using System;\n\
-//\n\
-//namespace MyNamespace.Domain\n\
-//{\n\
-//    public abstract class MyPoco\n\
-//    {\n\
-//        public string Name { get; set; }\n\
-//    }\n\
-//}\n";
+var sampleFile = "\
+using System;\n\
+\n\
+namespace MyNamespace.Domain\n\
+{\n\
+    public abstract class MyPoco\n\
+    {\n\
+        public string Name { get; set; }\n\
+    }\n\
+}\n";
 
-//var expectedOutput = "interface MyPoco {\n\
-//    Name: string;\n\
-//}\n";
+var expectedOutput = "interface MyPoco {\n\
+    Name: string;\n\
+}\n";
 
-//var pocoGen = require('../src/index.js');
+var pocoGen = require('../src/index.js');
 
-//describe('typescript-cs-poco', function() {
-//	it('should transform an abstract class correctly', function() {
-//		var result = pocoGen(sampleFile);
+describe('typescript-cs-poco', function() {
+	it('should transform an abstract class correctly', function() {
+		var result = pocoGen(sampleFile);
         
-//        expect(result).toEqual(expectedOutput);
-//	});
-//});
+        expect(result).toEqual(expectedOutput);
+	});
+});
