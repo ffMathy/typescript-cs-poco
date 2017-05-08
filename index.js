@@ -1,23 +1,23 @@
-var util = require('util');
-var vm = require('vm');
+var util = require("util");
+var vm = require("vm");
 
 var typeTranslation = {};
 
-typeTranslation.int = 'number';
-typeTranslation.double = 'number';
-typeTranslation.float = 'number';
-typeTranslation.Int32 = 'number';
-typeTranslation.Int64 = 'number';
-typeTranslation.short = 'number';
-typeTranslation.long = 'number';
-typeTranslation.decimal = 'number';
-typeTranslation.bool = 'boolean';
-typeTranslation.DateTime = 'string';
-typeTranslation.Guid = 'string';
-typeTranslation.string = 'string';
-typeTranslation.JObject = 'any';
-typeTranslation.dynamic = 'any';
-typeTranslation.object = 'any';
+typeTranslation.int = "number";
+typeTranslation.double = "number";
+typeTranslation.float = "number";
+typeTranslation.Int32 = "number";
+typeTranslation.Int64 = "number";
+typeTranslation.short = "number";
+typeTranslation.long = "number";
+typeTranslation.decimal = "number";
+typeTranslation.bool = "boolean";
+typeTranslation.DateTime = "string";
+typeTranslation.Guid = "string";
+typeTranslation.string = "string";
+typeTranslation.JObject = "any";
+typeTranslation.dynamic = "any";
+typeTranslation.object = "any";
 
 var blockCommentRegex = /\/\*([\s\S]*)\*\//gm;
 var lineCommentRegex = /\/\/(.*)/g;
@@ -34,10 +34,10 @@ function safeRegex(regex, input, options) {
     
     var context = vm.createContext(sandbox);
     var sanitizedInput = input
-        .replace(/[\n\r]+/gm, '\\n')
-        .replace(/\'/g, '\\\'');
+        .replace(/[\n\r]+/gm, "\\n")
+        .replace(/\'/g, "\\'");
 
-    var scriptString = 'while(result=regex.exec(\'' + sanitizedInput + '\')){results.push(result);}';
+    var scriptString = "while(result=regex.exec('" + sanitizedInput + "')){results.push(result);}";
     var script = new vm.Script(scriptString);
     
     try{
@@ -47,22 +47,22 @@ function safeRegex(regex, input, options) {
             timeout: timeout.toString()
         });
     } catch(e){
-        throw new Error('Regular expression timeout for pattern \'' + regex + '\' and data \'' + input + '\', with ' + sandbox.results.length + ' results gathered so far.\n\nInner error: ' + e);
+        throw new Error("Regular expression timeout for pattern '" + regex + "' and data '" + input + "', with " + sandbox.results.length + " results gathered so far.\n\nInner error: " + e);
     }
     
     return sandbox.results;
 }
 
 function removeComments(code) {
-    var output = code.replace(blockCommentRegex, '');
+    var output = code.replace(blockCommentRegex, "");
 
     var lines = output
-        .split('\n')
+        .split("\n")
         .map(function(line) {
-            return line.replace(lineCommentRegex, '');
+            return line.replace(lineCommentRegex, "");
         });
 
-    return lines.join('\n');
+    return lines.join("\n");
 }
 
 function generateInterface(className, inherits, input, isInterface, options) {
@@ -91,17 +91,17 @@ function generateInterface(className, inherits, input, isInterface, options) {
 
     var ignoreInheritance = options && options.ignoreInheritance;
     if (inherits && ignoreInheritance !== true && (!ignoreInheritance || ignoreInheritance.indexOf(inherits) === -1)) {
-        className += ' extends ' + inherits;
+        className += " extends " + inherits;
     }
 
-    var definition = 'interface ' + className + ' {\n';
+    var definition = "interface " + className + " {\n";
 
     if (options && options.dateTimeToDate) {
-        typeTranslation.DateTime = 'Date';
-        typeTranslation["System.DateTime"] = 'Date';
+        typeTranslation.DateTime = "Date";
+        typeTranslation["System.DateTime"] = "Date";
     } else {
-        typeTranslation.DateTime = 'string';
-        typeTranslation["System.DateTime"] = 'string';
+        typeTranslation.DateTime = "string";
+        typeTranslation["System.DateTime"] = "string";
     }
 
     if (options && options.customTypeTranslations) {
@@ -110,16 +110,16 @@ function generateInterface(className, inherits, input, isInterface, options) {
         }
     }
 
-    var leadingWhitespace = '    ';
+    var leadingWhitespace = "    ";
 
     var properties = [];
     var propertyResult;
     for (var propertyResult of safeRegex(propertyRegex, input, options)) {
         var visibility = propertyResult[1];
-        if(!isInterface && visibility !== 'public') continue;
+        if(!isInterface && visibility !== "public") continue;
 
         if (options && options.ignoreVirtual) {
-            var isVirtual = propertyResult[2] === 'virtual';
+            var isVirtual = propertyResult[2] === "virtual";
             if (isVirtual){ 
                 continue;
             }
@@ -127,8 +127,8 @@ function generateInterface(className, inherits, input, isInterface, options) {
 
         var varType = getVarType(propertyResult[3], "property-type", options);
 
-        var isReadOnly = propertyResult[2] === 'readonly';
-        var isOptional = propertyResult[4] === '?';
+        var isReadOnly = propertyResult[2] === "readonly";
+        var isOptional = propertyResult[4] === "?";
 
         var propertyName = propertyResult[5];
         if (propertyNameResolver) {
@@ -137,16 +137,16 @@ function generateInterface(className, inherits, input, isInterface, options) {
         definition += leadingWhitespace;
 
         if (options && !options.stripReadOnly && isReadOnly) {
-            definition += 'readonly ';
+            definition += "readonly ";
         }
 
         definition += propertyName;
 
         if (isOptional) {
-            definition += '?';
+            definition += "?";
         }
 
-        definition += ': ' + varType + ';\n';
+        definition += ": " + varType + ";\n";
 
         properties.push({ name: propertyName, type: varType });
     }
@@ -156,22 +156,22 @@ function generateInterface(className, inherits, input, isInterface, options) {
         var methodResult;
         for (var methodResult of safeRegex(methodRegex, input, options)) {
             var visibility = methodResult[1];
-            if(!isInterface && visibility !== 'public') continue;
+            if(!isInterface && visibility !== "public") continue;
 
             var varType = getVarType(methodResult[4], "method-return-type", options);
 
-            var isAsync = methodResult[3] === 'async';
+            var isAsync = methodResult[3] === "async";
             if(isAsync) {
-                if(varType.indexOf('<') > -1 && varType.indexOf('>') > -1) {
-                    varType = varType.replace(/^Task\<([^?\s]*)\>$/gm, '$1');
-                    varType = 'Promise<' + varType + '>';
+                if(varType.indexOf("<") > -1 && varType.indexOf(">") > -1) {
+                    varType = varType.replace(/^Task\<([^?\s]*)\>$/gm, "$1");
+                    varType = "Promise<" + varType + ">";
                 } else {
-                    varType = varType.replace('Task', 'Promise<void>');
+                    varType = varType.replace("Task", "Promise<void>");
                 }
             }
             
             if (options && options.ignoreVirtual) {
-                var isVirtual = methodResult[2] === 'virtual';
+                var isVirtual = methodResult[2] === "virtual";
                 if (isVirtual) {
                     continue;
                 }
@@ -183,24 +183,24 @@ function generateInterface(className, inherits, input, isInterface, options) {
             if (methodNameResolver) {
                 methodName = methodNameResolver(methodName);
             }
-            definition += leadingWhitespace + methodName + '(';
+            definition += leadingWhitespace + methodName + "(";
 
             var arguments = methodResult[6];
             var argumentsRegex = /\s*(?:\[[\w\d]+\])?([^?\s]*) ([\w\d]+)(?:\,\s*)?/gm;
 
             var argumentResult;
-            var argumentDefinition = '';
+            var argumentDefinition = "";
             for(var argumentResult of safeRegex(argumentsRegex, arguments, options)) {
-                if (argumentDefinition !== '') {
-                    argumentDefinition += ', ';
+                if (argumentDefinition !== "") {
+                    argumentDefinition += ", ";
                 }
-                argumentDefinition += argumentResult[2] + ': ' + getVarType(argumentResult[1], "method-argument-type", options);
+                argumentDefinition += argumentResult[2] + ": " + getVarType(argumentResult[1], "method-argument-type", options);
             }
 
             definition += argumentDefinition;
 
 
-            definition += '): ' + varType + ';\n';
+            definition += "): " + varType + ";\n";
 
             methods.push({ name: methodName, returnType: varType });
         }
@@ -211,7 +211,7 @@ function generateInterface(className, inherits, input, isInterface, options) {
         definition += "\n" + leadingWhitespace + customCode + "\n";
     }
 
-    definition += '}\n';
+    definition += "}\n";
 
     return definition;
 }
@@ -247,17 +247,17 @@ function getVarType(typeCandidate, scope, options) {
         var collectionType = collectionMatch[1];
         var collectionContentType = collectionMatch[2];
 
-        varType = getVarType(collectionContentType, null, options) + '[]';
+        varType = getVarType(collectionContentType, null, options) + "[]";
     } else if (arrayMatch) {
         var arrayType = arrayMatch[1];
 
-        varType = getVarType(arrayType) + '[]';
+        varType = getVarType(arrayType) + "[]";
     } else if (genericPropertyMatch) {
         var generic = genericPropertyMatch[1];
 
         var genericTypes = genericPropertyMatch[2];
         var splits = genericTypes
-            .split(',')
+            .split(",")
             .map(function(x) { return x.trim(); });
         var finalGenericType = "";
         for(let split of splits) {
@@ -265,7 +265,7 @@ function getVarType(typeCandidate, scope, options) {
             finalGenericType += getVarType(split, null, options);
         }
 
-        varType = generic + '<' + finalGenericType + '>';
+        varType = generic + "<" + finalGenericType + ">";
     }
 
     if(scope && (options && options.typeResolver)) {
@@ -278,9 +278,9 @@ function generateEnum(enumName, input, options) {
     var entryRegex = /(\w+)\s*=?\s*(-*\d+)?[,|\s]/gm;
 
     if (options.useStringUnionTypes) {
-        var definition = 'type ' + enumName + ' =\n    ';
+        var definition = "type " + enumName + " =\n    ";
     } else {
-        var definition = 'enum ' + enumName + ' {\n    ';
+        var definition = "enum " + enumName + " {\n    ";
     }
 
     var entryResult;
@@ -303,30 +303,29 @@ function generateEnum(enumName, input, options) {
         if (options.useStringUnionTypes) {
             elements.push("'" + entryName + "'");
         } else {
-            elements.push(entryName + ' = ' + entryValue);
+            elements.push(entryName + " = " + entryValue);
         }
     }
 
     if (options.useStringUnionTypes) {
-        definition += elements.join(' |\n    ');
-        definition += '\n';
+        definition += elements.join(" |\n    ");
+        definition += "\n";
     } else {
-        definition += elements.join(',\n    ');
-        definition += '\n}\n';
+        definition += elements.join(",\n    ");
+        definition += "\n}\n";
     }
 
     return definition;
 }
 
 function stripDecorators(input) {
-    var decoratorsRegex = /\[\w+\("[A-Öa-ö\s]*"\)\]/gm;
-
-    return input.replace(decoratorsRegex, '');
+    const decoratorsRegex = /\[\w+\(\s*(?:\w+\s*\=\s*)?"[A-Öa-ö\s]*"\s*\)\]/gm;
+    return input.replace(decoratorsRegex, "");
 }
 
 module.exports = function(input, options) {
     input = removeComments(input);
-    var result = '';
+    var result = "";
     var match;
 
     if (!options) {
@@ -339,14 +338,14 @@ module.exports = function(input, options) {
         var inherits = match[4];
 
         if (result.length > 0) {
-            result += '\n';
+            result += "\n";
         }
 
-        if (type === 'class' || type === 'struct' || (type === 'interface' && options.includeInterfaces)) {
-            result += generateInterface(typeName, inherits, match[5], type === 'interface', options);
-        } else if (type === 'enum') {
+        if (type === "class" || type === "struct" || (type === "interface" && options.includeInterfaces)) {
+            result += generateInterface(typeName, inherits, match[5], type === "interface", options);
+        } else if (type === "enum") {
             if (!options.baseNamespace) {
-              result += 'declare ';
+              result += "declare ";
             }
 
             result += generateEnum(typeName, match[5], options);
@@ -357,20 +356,20 @@ module.exports = function(input, options) {
         var firstLine;
 
         if (options.definitionFile === false) {
-            firstLine = 'module ' + options.baseNamespace + ' {';
+            firstLine = "module " + options.baseNamespace + " {";
         } else {
-            firstLine = 'declare module ' + options.baseNamespace + ' {';
+            firstLine = "declare module " + options.baseNamespace + " {";
         }
 
         var lines = [firstLine];
 
-        lines = lines.concat(result.split('\n').map(function(line) {
-            return '    ' + (/^(?:interface|enum|type)/.test(line) ? 'export ' + line : line);
+        lines = lines.concat(result.split("\n").map(function(line) {
+            return "    " + (/^(?:interface|enum|type)/.test(line) ? "export " + line : line);
         }));
         lines = lines.slice(0, lines.length - 1);
-        lines = lines.concat('}');
+        lines = lines.concat("}");
 
-        result = lines.join('\n');
+        result = lines.join("\n");
     }
     
     return result;
