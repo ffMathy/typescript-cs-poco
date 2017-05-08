@@ -25,7 +25,7 @@ interface MyPoco extends IPoco {\n\
     Name: string;\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should export an interface if option is set', function() {

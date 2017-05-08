@@ -57,7 +57,7 @@ var expectedOutput = "interface MyPoco extends BasePoco {\n\
     SomeGuid: string;\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should turn inheritence into extends', function() {

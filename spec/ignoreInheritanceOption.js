@@ -22,7 +22,7 @@ var expectedOutput = "interface MyPoco {\n\
     Name: string;\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should transform an abstract class correctly', function() {

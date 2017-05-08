@@ -17,7 +17,7 @@ var expectedOutput = "interface MyPoco {\n\
     Stuff: { [index: number]: number };\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should transform a POCO with a dictionary property correctly', function() {

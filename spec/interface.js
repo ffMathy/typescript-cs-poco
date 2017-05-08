@@ -20,7 +20,7 @@ var expectedOutput = "interface MyInterface {\n\
     Foo(bar: string): string;\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should transform an interface correctly', function() {

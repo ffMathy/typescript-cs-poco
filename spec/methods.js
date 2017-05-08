@@ -65,7 +65,7 @@ var expectedOutput = "interface MyPoco {\n\
     EmptyVoid(): void;\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function () {
     it('should transform a method correctly', function () {

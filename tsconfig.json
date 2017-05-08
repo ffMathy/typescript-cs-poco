@@ -1,0 +1,10 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "allowJs": true,
+    "checkJs": true,
+    "target": "es5", 
+    "moduleResolution": "node",
+    "module": "commonjs" 
+  }
+}

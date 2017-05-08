@@ -32,7 +32,7 @@ var expectedOutput = "declare enum MyEnum {\n\
     Foo = 1337\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should transform an enum correctly', function() {

@@ -29,7 +29,7 @@ var expectedOutput = "declare enum MyEnum {\n\
     Ultraviolet = 11\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should ignore an enum\'s explicit type', function() {

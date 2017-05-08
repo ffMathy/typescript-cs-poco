@@ -66,7 +66,7 @@ declare enum MyEnum {\n\
     Green = 0,\n\
     Blue = 1\n\
 }\n";
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should handle enums and classes in the same file', function() {

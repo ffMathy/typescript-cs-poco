@@ -23,7 +23,7 @@ var expectedOutput = "declare type MyEnum =\n\
     'Blue'\n\
 ";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should transform an enum to a string union type correctly', function() {

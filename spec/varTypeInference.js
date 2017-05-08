@@ -2,7 +2,7 @@
 // Disabled multiline warning, we're fine with ES5
 // jshint -W043
 
-pocoGen = require('../index.js');
+pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should transform types correctly', function() {

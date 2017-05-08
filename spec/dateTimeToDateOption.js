@@ -64,7 +64,7 @@ var expectedOutput = "interface MyPoco {\n\
     SomeSpecifiedDateTime: Date;\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should turn DateTime into Date with option set', function() {

@@ -2,7 +2,7 @@
 // Disabled multiline warning, we're fine with ES5
 // jshint -W043
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should transform a POCO with a single generic type correctly', function() {

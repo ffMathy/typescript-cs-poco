@@ -19,7 +19,7 @@ var expectedOutput = "interface MyPoco {\n\
     foo(blah: number): OtherStuff;\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should transform additional code correctly', function() {
