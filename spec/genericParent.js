@@ -16,7 +16,7 @@ var expectedOutput = "interface LatLng extends IEquatable<LatLng> {\n\
     lng: number;\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should convert a class with a generic base class correctly', function() {

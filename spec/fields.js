@@ -20,7 +20,7 @@ var expectedOutput = "interface MyPoco {\n\
     InterestingWhitespace: string;\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should ignore initial newline', function() {

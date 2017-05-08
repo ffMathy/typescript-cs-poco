@@ -15,7 +15,7 @@ interface Profile {\n\
     Value: Entry<boolean>;\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
     it('should convert a generic property correctly', function() {

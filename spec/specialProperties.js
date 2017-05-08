@@ -35,7 +35,7 @@ var expectedWithoutVirtuals = "interface MyPoco {\n\
 interface MyOtherPoco {\n\
     id: number;\n\
 }\n";
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should include properties marked as virtual', function() {

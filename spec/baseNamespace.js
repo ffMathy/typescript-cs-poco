@@ -29,7 +29,7 @@ var expectedOutput = "declare module MyNamespace {\n\
     }\n\
 }";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
 	it('should use the baseNamespace option correctly', function() {

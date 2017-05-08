@@ -21,7 +21,7 @@ var expectedOutput = "interface MyPoco {\n\
     foo(): string;\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function () {
     it('should use the methodNameResolver option correctly', function () {

@@ -21,7 +21,7 @@ var expectedOutput = "interface MyPoco {\n\
     title: string;\n\
 }\n";
 
-var pocoGen = require('../index.js');
+var pocoGen = require('../src/index.js');
 
 describe('typescript-cs-poco', function() {
   it('should use the propertyNameResolver option correctly', function() {
