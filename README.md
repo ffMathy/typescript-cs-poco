@@ -10,7 +10,7 @@ Generates a Typescript type definition file for a C# POCO class.  Takes in a str
 
 ## Installation with npm
 
-`npm install --save https://github.com/ffMathy/typescript-cs-poco`
+`npm install --save https://github.com/ffMathy/typescript-cs-poco.git`
 
 ## Options
 
