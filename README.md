@@ -1,3 +1,6 @@
+# DEPRECATED!
+This library has been deprecated in favor of the new, much more stable and flexible: https://github.com/ffMathy/FluffySpoon.JavaScript.CSharpToTypeScriptGenerator/
+
 # typescript-cs-poco
 Generates a Typescript type definition file for a C# POCO class.  Takes in a string of the file contents and spits back a string of the matching Typescript interface.
 
